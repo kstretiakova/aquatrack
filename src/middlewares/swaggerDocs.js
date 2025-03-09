@@ -38,7 +38,7 @@ export const swaggerDocs = () => {
           color: #333 !important;
           border: 1px solid #D1D5DB !important;
           border-radius: 10px;
-          padding: 8px;
+          padding: 12px;
           font-size: 14px;
           }
             .swagger-ui .json-schema-2020-12-accordion,
