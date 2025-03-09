@@ -1,6 +1,13 @@
+import createHttpError from 'http-errors';
 import { THIRTY_DAYS } from '../constants/index.js';
-import { signinUser, logoutUser, refreshUsersSession, signupUser} from '../services/users.js';
-
+import {
+  signinUser,
+  logoutUser,
+  refreshUsersSession,
+  signupUser,
+} from '../services/users.js';
+import { UsersCollection } from '../db/models/user.js';
+import { saveFileToCloudinary } from '../services/fileService.js';
 
 export const signupUserController = async (req, res) => {
   const user = await signupUser(req.body);
@@ -72,5 +79,27 @@ export const getCurrentUserController = async (req, res) => {
     status: 200,
     message: 'Current user retrieved successfully!',
     data: { _id, name, email },
+  });
+};
+export const updateUserController = async (req, res) => {
+  const { _id } = req.user;
+  const updateData = { ...req.body };
+  if (req.file) {
+    updateData.avatarUrl = await saveFileToCloudinary(req.file.path);
+  }
+
+  const updatedUser = await UsersCollection.findByIdAndUpdate(_id, updateData, {
+    new: true,
+    runValidators: true,
+  });
+
+  if (!updatedUser) {
+    throw createHttpError(404, 'User not found');
+  }
+
+  res.json({
+    status: 200,
+    message: 'User updated successfully!',
+    data: updatedUser,
   });
 };
