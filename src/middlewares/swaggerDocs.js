@@ -11,53 +11,54 @@ export const swaggerDocs = () => {
       ...swaggerUI.serve,
       swaggerUI.setup(swaggerDoc, {
         customCss: `body, .swagger-ui {
-          background-color: #121212;
-          color: #E0E0E0 !important;
+          background-color: #F5F7FA;
+          color: #333 !important;
           font-family: 'Inter', sans-serif;
           }
             .swagger-ui .info a {
             font-weight: bold;
-            color: #00D1B2;
+            color: #007BFF;
             transition: color 0.3s ease-in-out;
             }
             .swagger-ui .info a:hover {
-            color: #32E6B5;
+            color: #0056b3;
             }
             .swagger-ui .scheme-container {
           max-width: 1400px;
           margin: 0 auto;
           border-radius: 12px;
-          background-color: #1E1E1E !important;
-          border: 1px solid #333 !important;
-          color: #FFFFFF !important;
+          background-color: #FFFFFF !important;
+          border: 1px solid #DDDDDD !important;
+          color: #333 !important;
           padding: 12px;
-          box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
           }
             .swagger-ui .scheme-container select {
-          background-color: #252525 !important;
-          color: #E0E0E0 !important;
-          border: 1px solid #444 !important;
+          background-color: #F0F3F7 !important;
+          color: #333 !important;
+          border: 1px solid #CCCCCC !important;
           border-radius: 8px;
           padding: 6px;
           }
             .swagger-ui .json-schema-2020-12-accordion,
             .swagger-ui .json-schema-2020-12-expand-deep-button {
           background-color: transparent !important;
-          color: #00D1B2;
+          color: #007BFF;
           font-weight: bold;
           }
             .swagger-ui .opblock .opblock-section-header {
-          background: #1E1E1E;
+          background: #E8F0FE;
           border-radius: 10px;
-          padding: 10px 15px;
-          border-bottom: 1px solid #333;
+          padding: 12px 18px;
+          border-bottom: 1px solid #CCCCCC;
+          font-weight: bold;
           }
           .information-container.wrapper {
           padding: 0;
           }
             .information-container.wrapper .block.col-12 {
-          background: linear-gradient(to right, #232A34, #1B1F24);
-          box-shadow: 0 0 10px 3px rgba(0, 209, 178, 0.2);
+          background: linear-gradient(to right, #FFFFFF, #F0F3F7);
+          box-shadow: 0 0 12px 2px rgba(0, 123, 255, 0.15);
           padding: 18px;
           margin: 20px 0;
           border-radius: 15px;
@@ -70,18 +71,18 @@ export const swaggerDocs = () => {
           }
             .swagger-ui input, .swagger-ui textarea {
           border-radius: 8px;
-          border: 1px solid #444;
+          border: 1px solid #CCCCCC;
           padding: 8px;
-          background: #252525;
-          color: #E0E0E0;
+          background: #FFFFFF;
+          color: #333;
           transition: all 0.3s ease-in-out;
           }
             .swagger-ui input:focus, .swagger-ui textarea:focus {
-          border-color: #00D1B2;
-          box-shadow: 0 0 8px rgba(0, 209, 178, 0.4);
+          border-color: #007BFF;
+          box-shadow: 0 0 6px rgba(0, 123, 255, 0.3);
           }
             .swagger-ui .opblock .opblock-summary-method {
-          background: linear-gradient(to right, #00D1B2, #00A896);
+          background: linear-gradient(to right, #007BFF, #0056b3);
           color: #fff !important;
           font-weight: bold;
           padding: 10px 18px;
@@ -89,20 +90,20 @@ export const swaggerDocs = () => {
           transition: background 0.3s ease-in-out;
           }
             .swagger-ui .opblock .opblock-summary-method:hover {
-          background: linear-gradient(to right, #00A896, #00867D);
+          background: linear-gradient(to right, #0056b3, #004096);
           }
             .swagger-ui .authorize {
-          border: 1px solid #00D1B2 !important;
-          background: transparent !important;
-          color: #00D1B2 !important;
+          border: 1px solid #007BFF !important;
+          background: #FFFFFF !important;
+          color: #007BFF !important;
           padding: 8px 14px;
           border-radius: 8px;
           font-weight: bold;
           transition: all 0.3s ease-in-out;
           }
             .swagger-ui .authorize:hover {
-          background: #00D1B2 !important;
-          color: #121212 !important;
+          background: #007BFF !important;
+          color: #FFFFFF !important;
           }`,
       }),
     ];
