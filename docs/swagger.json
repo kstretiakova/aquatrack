@@ -2,12 +2,12 @@
   "openapi": "3.1.0",
   "info": {
     "version": "1.0.0",
-    "title": "AquaTrack",
+    "title": "AquaTrack Application",
     "license": {
       "name": "AquaTrack",
       "url": "https://aqua-track-phi.vercel.app/"
     },
-    "description": "Team 6"
+    "description": "This is a documentation of AquaTrack Application from AquaCoders Team!"
   },
   "servers": [
     {
@@ -36,6 +36,17 @@
         "security": [
           {
             "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "day",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "2025-03-05"
+            }
           }
         ],
         "responses": {
@@ -89,6 +100,17 @@
             "bearerAuth": []
           }
         ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "month",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "2025-03"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "Get monthly water",
@@ -113,7 +135,23 @@
                     "data": {
                       "type": "array",
                       "items": {
-                        "$ref": "#/components/schemas/water"
+                        "type": "object",
+                        "required": [
+                          "date",
+                          "stats"
+                        ],
+                        "properties": {
+                          "date": {
+                            "description": "Day with total amount of water drunk",
+                            "type": "string",
+                            "example": "2025-03-01"
+                          },
+                          "stats": {
+                            "description": "Total amount of water drunk per day, ml",
+                            "type": "number",
+                            "example": 2100
+                          }
+                        }
                       }
                     }
                   }
@@ -391,7 +429,7 @@
                     "gender": {
                       "description": "User's gender",
                       "type": "string",
-                      "example": "male"
+                      "example": "female"
                     },
                     "weight": {
                       "description": "User's weight",
@@ -717,7 +755,7 @@
         ],
         "requestBody": {
           "content": {
-            "multipart/form-data": {
+            "application/json": {
               "schema": {
                 "type": "object",
                 "properties": {
@@ -734,12 +772,12 @@
                   "gender": {
                     "description": "User's gender",
                     "type": "string",
-                    "example": "male"
+                    "example": "fefemale"
                   },
                   "weight": {
                     "description": "User's weight",
                     "type": "number",
-                    "example": 55
+                    "example": 45
                   },
                   "dailySportTime": {
                     "description": "Daily number of hours of sports",
@@ -750,11 +788,6 @@
                     "description": "The daily rate of water is set, ml",
                     "type": "number",
                     "example": 2000
-                  },
-                  "avatarUrl": {
-                    "description": "User's avatar",
-                    "type": "string",
-                    "format": "binary"
                   }
                 }
               }
@@ -781,6 +814,84 @@
                     "message": {
                       "type": "string",
                       "example": "Successfully patched a user!"
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/user"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "401": {
+            "$ref": "#/components/responses/401"
+          }
+        }
+      }
+    },
+    "/users/{id}/avatar": {
+      "patch": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Update User Avatar",
+        "operationId": "patchUserAvatar",
+        "description": "Update the avatar user by id with binary image",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "65ca67e7ae7f10c88b598008"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "avatar": {
+                    "description": "User's avatar",
+                    "type": "string",
+                    "format": "binary"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successfully patched a user avatar!",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "status",
+                    "message",
+                    "data"
+                  ],
+                  "properties": {
+                    "status": {
+                      "type": "integer",
+                      "example": 200
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Successfully patched a user avatar!"
                     },
                     "data": {
                       "$ref": "#/components/schemas/user"
@@ -1252,12 +1363,12 @@
           "gender": {
             "description": "User's gender",
             "type": "string",
-            "example": "male"
+            "example": "female"
           },
           "weight": {
             "description": "User's weight",
             "type": "number",
-            "example": 55
+            "example": 45
           },
           "dailySportTime": {
             "description": "Daily number of hours of sports",

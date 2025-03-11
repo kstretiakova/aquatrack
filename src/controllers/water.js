@@ -6,18 +6,13 @@ import {
   getMonthlyWater,
 } from '../services/water.js';
 
-// тут юзером додається запис про воду
-
+// додає запис
 export const addWaterController = async (req, res, next) => {
   const { volume, date } = req.body;
 
-  // перетворення дати в формат дейт
+  const userId = req.user._id;
 
-  const formattedDate = new Date(date);
-
-  const userId = '67a1f599b7ed372da1c632e0';
-
-  const newWater = await addWater(userId, volume, formattedDate);
+  const newWater = await addWater(userId, volume, date);
 
   res.status(201).json({
     status: 201,
@@ -26,13 +21,12 @@ export const addWaterController = async (req, res, next) => {
   });
 };
 
-// редагуванням юзером запису про воду
-
+// редагування
 export const updateWaterController = async (req, res, next) => {
   const { id } = req.params;
   const { volume, date } = req.body;
 
-  const userId = '67a1f599b7ed372da1c632e0';
+  const userId = req.user._id;
 
   const updatedWater = await updateWater(userId, id, volume, date);
 
@@ -43,25 +37,22 @@ export const updateWaterController = async (req, res, next) => {
   });
 };
 
-// видалення юзером запису про воду
-
+// виделення
 export const deleteWaterController = async (req, res, next) => {
   const { id } = req.params;
-
-  const userId = '67a1f599b7ed372da1c632e0';
+  const userId = req.user._id;
 
   await deleteWater(userId, id);
 
   res.status(204).send();
 };
 
-// тут отримуються дані про споживання води за певний конкретний день
-
+// за день
 export const getDailyWaterController = async (req, res, next) => {
+  const userId = req.user._id;
+  const { day } = req.query;
 
-  const { userId = '67a1f599b7ed372da1c632e0', date } = req.query;
-
-  const waterEntries = await getDailyWater(userId, date);
+  const waterEntries = await getDailyWater(userId, day);
 
   res.json({
     status: 200,
@@ -70,19 +61,27 @@ export const getDailyWaterController = async (req, res, next) => {
   });
 };
 
-// тут отримуються дані про споживання води за певний конкретний місяць
-
+// отримує дані споживання за конкретний місяць
 export const getMonthlyWaterController = async (req, res, next) => {
+  try {
+    const userId = req.user._id;
+    const { month } = req.query; // Очікую формат "2025-03"
 
-  const userId = '67a1f599b7ed372da1c632e0';
+    if (!month) {
+      return res.status(400).json({
+        status: 400,
+        message: 'Month parameter is required (format: MM-YYYY)',
+      });
+    }
 
-  const { month } = req.query;
+    const waterEntries = await getMonthlyWater(userId, month);
 
-  const waterEntries = await getMonthlyWater(userId, month);
-
-  res.json({
-    status: 200,
-    message: 'Successfully retrieved monthly water records!',
-    data: waterEntries,
-  });
+    res.json({
+      status: 200,
+      message: 'Successfully retrieved monthly water records!',
+      data: waterEntries,
+    });
+  } catch (error) {
+    next(error);
+  }
 };

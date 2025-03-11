@@ -1,15 +1,15 @@
 import { WaterCollection } from '../db/models/water.js';
 import createError from 'http-errors';
+import mongoose from 'mongoose';
 
 export const addWater = async (userId, volume, date) => {
   if (volume < 50 || volume > 5000) {
     throw createError(400, 'The volume of water should be from 50 to 5000 ml');
   }
 
-  const formattedDate = new Date(date);
+  const formattedDate = new Date(date); // в date
 
-  // створює юзер запис в базі і база повертає його тут
-
+  // ,створює і повертає запис
   const newWater = await WaterCollection.create({
     volume,
     date: formattedDate,
@@ -23,11 +23,17 @@ export const updateWater = async (userId, id, volume, date) => {
     throw createError(400, 'The volume of water should be from 50 to 5000 ml');
   }
 
-  // редагує, в базі знаходиться id, відправлються нові данні та повертається оновлений запис
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    throw createError(400, 'Invalid water record ID');
+  }
+
+  const formattedDate = new Date(date);
+
+  // редагування, в базі є id, відправляються нові дані та повертається оновлений запис
 
   const updatedWater = await WaterCollection.findOneAndUpdate(
     { _id: id, userId },
-    { volume, date: new Date(date) },
+    { volume, date: formattedDate },
     { new: true },
   );
 
@@ -53,20 +59,19 @@ export const deleteWater = async (userId, id) => {
 
 export const getDailyWater = async (userId, date) => {
   const start = new Date(date);
-  start.setHours(0, 0, 0, 0); // поч дня
+  start.setHours(0, 0, 0, 0); // день починається
   const end = new Date(start);
-  end.setDate(end.getDate() + 1); // кін дня
+  end.setDate(end.getDate() + 1); // день закінчується
 
-  // знаходимо значення в базі за вказаний день
+  // значення за вказаний день
 
   const waterEntries = await WaterCollection.find({
     userId,
-
     //   фільтрація по даті
 
     date: { $gte: start, $lt: end },
 
-    // тут фільтрація за датою в зворотньому напрямку
+    // фільтрація за датою в зворотньому напрямку
   })
     .sort({ date: -1 })
     .lean(); //отримуємо прості об'єкти
@@ -78,22 +83,40 @@ export const getDailyWater = async (userId, date) => {
 };
 
 export const getMonthlyWater = async (userId, month) => {
-  const start = new Date(month);
-  start.setDate(1);
-  start.setHours(0, 0, 0, 0);
+  // Параметр місяця який запрашує юзер ("2025-03")
+  const [inputYear, inputMonth] = month.split('-').map(Number);
 
-  const end = new Date(start);
-  end.setMonth(end.getMonth() + 1);
+  // Вираховую початок і кінець місяця
+  const start = new Date(inputYear, inputMonth - 1, 1, 0, 0, 0, 0);
+  const end = new Date(inputYear, inputMonth, 0, 23, 59, 59, 999);
 
+  // Всі записи за місяць
   const waterEntries = await WaterCollection.find({
     userId,
     date: { $gte: start, $lt: end },
   })
-    .sort({ date: -1 })
+    .sort({ date: 1 })
     .lean();
 
-  return waterEntries.map((entry) => ({
-    ...entry,
-    date: new Date(entry.date), //  в Date
-  }));
+  // По днях
+  const groupedByDay = waterEntries.reduce((acc, entry) => {
+    const day = new Date(entry.date).getDate(); // Число дня
+    // Додаємо обсяг води за цей день
+    acc[day] = (acc[day] || 0) + entry.volume;
+    return acc;
+  }, {});
+
+  // масив усіх днів місяця
+  const daysInMonth = new Date(inputYear, inputMonth, 0).getDate(); // кількість днів в місяць який треба
+
+  // відповідь масивом по дням
+  const result = Array.from({ length: daysInMonth }, (_, i) => {
+    const formattedDate = `${inputYear}-${String(inputMonth).padStart(
+      2,
+      '0',
+    )}-${String(i + 1).padStart(2, '0')}`;
+    return { date: formattedDate, stats: groupedByDay[i + 1] || 0 };
+  });
+
+  return result;
 };

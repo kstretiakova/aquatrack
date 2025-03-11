@@ -1,19 +1,11 @@
-//src/db/models/user.js
 import { model, Schema } from 'mongoose';
+import {GENDER_TYPES} from '../../constants/index.js';
 
 const usersSchema = new Schema(
   {
     name: {
       type: String,
       default: '',
-      maxlength: 12,
-      validate: {
-        validator: function (value) {
-          // Если строка не пустая, она должна быть длиной минимум 2 символа
-          return value === '' || value.length >= 2;
-        },
-        message: 'Name must be at least 2 characters long if provided',
-      },
     },
     email: {
       type: String,
@@ -26,26 +18,24 @@ const usersSchema = new Schema(
     },
     gender: {
       type: String,
-      enum: ['male', 'female'],
-      default: 'female',
+      enum: GENDER_TYPES,
+      default: 'none',
+      required: true,
     },
     weight: {
       type: Number,
-      min: 0,
-      max: 250,
       default: 0,
+      required: true,
     },
     dailySportTime: {
       type: Number,
-      min: 0,
-      max: 24,
       default: 0,
+      required: true,
     },
     dailyNorm: {
       type: Number,
-      min: 500,
-      max: 15000,
       default: 1500,
+      required: true,
     },
     avatarUrl: {
       type: String,
@@ -59,26 +49,9 @@ const usersSchema = new Schema(
 );
 
 usersSchema.methods.toJSON = function () {
-  const {
-    _id,
-    name,
-    email,
-    gender,
-    weight,
-    dailySportTime,
-    dailyNorm,
-    avatarUrl,
-  } = this.toObject();
-  return {
-    _id,
-    name,
-    email,
-    gender,
-    weight,
-    dailySportTime,
-    dailyNorm,
-    avatarUrl,
-  };
+  const obj = this.toObject();
+  delete obj.password;
+  return obj;
 };
 
 export const UsersCollection = model('users', usersSchema);

@@ -16,7 +16,7 @@ requestBody:
           email:
             description: 'User Email'
             type: string
-            example: 'kseniia@gmail.com'
+            example: 'tymchuk.developer@gmail.com'
           password:
             description: 'User Password'
             type: string

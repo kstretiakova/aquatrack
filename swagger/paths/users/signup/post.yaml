@@ -60,7 +60,7 @@ responses:
             gender:
               description: "User's gender"
               type: string
-              example: 'male'
+              example: 'female'
             weight:
               description: "User's weight"
               type: number

@@ -1,18 +1,26 @@
 import { Router } from 'express';
 import { ctrlWrapper } from '../utils/ctrlWrapper.js';
-import { inputUserSchema, updateUserSchema } from '../validation/users.js';
+import {
+  inputUserSchema,
+  requestResetEmailSchema,
+  resetPasswordSchema,
+} from '../validation/users.js';
 import {
   signinUserController,
   logoutUserController,
   refreshUserSessionController,
   signupUserController,
   getCurrentUserController,
+  requestResetEmailController,
+  resetPasswordController,
   updateUserController,
+  updateUserAvatarController,
+  getUsersCounterController,
 } from '../controllers/users.js';
 import { validateBody } from '../middlewares/validateBody.js';
 import { authenticate } from '../middlewares/authenticate.js';
+import { updateUserSchema } from '../validation/users.js';
 import { upload } from '../middlewares/multer.js';
-
 const router = Router();
 
 router.post(
@@ -28,20 +36,31 @@ router.post(
 router.post('/refresh', ctrlWrapper(refreshUserSessionController));
 router.post('/logout', ctrlWrapper(logoutUserController));
 router.get('/current', authenticate, ctrlWrapper(getCurrentUserController));
+router.post(
+  '/send-reset-email',
+  validateBody(requestResetEmailSchema),
+  ctrlWrapper(requestResetEmailController),
+);
+router.post(
+  '/reset-password',
+  validateBody(resetPasswordSchema),
+  ctrlWrapper(resetPasswordController),
+);
 
 router.patch(
-  '/update',
+  '/:id',
   authenticate,
-  upload.single('avatar'),
   validateBody(updateUserSchema),
   ctrlWrapper(updateUserController),
 );
 
-router.post(
-  '/refresh',
+router.patch(
+  '/:id/avatar',
   authenticate,
-  ctrlWrapper(refreshUserSessionController),
+  upload.single('avatarUrl'),
+  ctrlWrapper(updateUserAvatarController),
 );
 
-router.post('/logout', authenticate, ctrlWrapper(logoutUserController));
+router.get('/counter', ctrlWrapper(getUsersCounterController));
+
 export default router;
