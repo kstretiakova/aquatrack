@@ -9,6 +9,7 @@ import {
   requestResetToken,
   resetPassword,
   updateUser,
+  getUsersCounter,
 } from '../services/users.js';
 import { saveFileToCloudinary } from '../utils/saveFileToCloudinary.js';
 import { saveFileToUploadDir } from '../utils/saveFileToUploadDir.js';
@@ -171,4 +172,20 @@ export const updateUserAvatarController = async (req, res, next) => {
   } catch (error) {
     next(error);
   }
+};
+
+export const getUsersCounterController = async (req, res) => {
+  const userData = await getUsersCounter();
+  const { usersCounter, lastUsersAvatars } = userData;
+
+  const responseData = {
+    status: 200,
+    message: 'Successfully got full info about registered users!',
+    data: {
+      usersCounter: usersCounter,
+      lastUsersAvatars: lastUsersAvatars,
+    },
+  };
+
+  res.status(200).json(responseData);
 };
