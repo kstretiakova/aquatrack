@@ -15,12 +15,12 @@ import {
   resetPasswordController,
   updateUserController,
   updateUserAvatarController,
-  getUsersCounterController,
 } from '../controllers/users.js';
 import { validateBody } from '../middlewares/validateBody.js';
 import { authenticate } from '../middlewares/authenticate.js';
 import { updateUserSchema } from '../validation/users.js';
-import { upload } from '../middlewares/multer.js';
+import { upload } from '../middlewares/upload.js';
+
 const router = Router();
 
 router.post(
@@ -48,19 +48,17 @@ router.post(
 );
 
 router.patch(
-  '/:id',
+  '/',
   authenticate,
   validateBody(updateUserSchema),
   ctrlWrapper(updateUserController),
 );
 
 router.patch(
-  '/:id/avatar',
+  '/avatar',
   authenticate,
   upload.single('avatarUrl'),
   ctrlWrapper(updateUserAvatarController),
 );
-
-router.get('/counter', ctrlWrapper(getUsersCounterController));
 
 export default router;
