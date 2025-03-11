@@ -44,25 +44,37 @@ export const signinUser = async ({ email, password }) => {
 };
 
 export const refreshUsersSession = async ({ sessionId, refreshToken }) => {
-  const session = await SessionsCollection.findOne({ _id: sessionId, refreshToken });
+  const session = await SessionsCollection.findOne({
+    _id: sessionId,
+    refreshToken,
+  });
   if (!session || new Date() > new Date(session.refreshTokenValidUntil)) {
     throw createHttpError(401, 'Invalid or expired session');
   }
 
   await SessionsCollection.deleteOne({ _id: sessionId, refreshToken });
-  return SessionsCollection.create({ userId: session.userId, ...generateSession() });
+  return SessionsCollection.create({
+    userId: session.userId,
+    ...generateSession(),
+  });
 };
 
-export const logoutUser = async (sessionId) => SessionsCollection.deleteOne({ _id: sessionId });
+export const logoutUser = async (sessionId) =>
+  SessionsCollection.deleteOne({ _id: sessionId });
 
 export const updateUser = async (id, payload, options = {}) =>
-  UsersCollection.findOneAndUpdate({ _id: id }, payload, { ...options, new: true });
+  UsersCollection.findOneAndUpdate({ _id: id }, payload, {
+    ...options,
+    new: true,
+  });
 
 export const requestResetToken = async (email) => {
   const user = await UsersCollection.findOne({ email });
   if (!user) throw createHttpError(404, 'User not found');
 
-  const resetToken = jwt.sign({ sub: user._id, email }, JWT_SECRET, { expiresIn: '15m' });
+  const resetToken = jwt.sign({ sub: user._id, email }, JWT_SECRET, {
+    expiresIn: '15m',
+  });
   const templatePath = path.join(TEMPLATES_DIR, 'reset-password-email.html');
   const template = handlebars.compile(await fs.readFile(templatePath, 'utf-8'));
 
@@ -70,7 +82,10 @@ export const requestResetToken = async (email) => {
     from: SMTP.SMTP_FROM,
     to: email,
     subject: 'Reset your password',
-    html: template({ name: user.name, link: `${APP_DOMAIN}/reset-password?token=${resetToken}` }),
+    html: template({
+      name: user.name,
+      link: `${APP_DOMAIN}/reset-password?token=${resetToken}`,
+    }),
   });
 };
 
@@ -82,23 +97,16 @@ export const resetPassword = async ({ token, password }) => {
     throw createHttpError(401, 'Token is expired or invalid');
   }
 
-  const user = await UsersCollection.findOne({ _id: decoded.sub, email: decoded.email });
+  const user = await UsersCollection.findOne({
+    _id: decoded.sub,
+    email: decoded.email,
+  });
   if (!user) throw createHttpError(404, 'User not found');
 
   const hashedPassword = await bcrypt.hash(password, 10);
-  await UsersCollection.updateOne({ _id: user._id }, { $set: { password: hashedPassword } });
+  await UsersCollection.updateOne(
+    { _id: user._id },
+    { $set: { password: hashedPassword } },
+  );
   await SessionsCollection.deleteMany({ userId: user._id });
-};
-
-export const getUsersCounter = async () => {
-  try {
-    const usersCounter = await UsersCollection.countDocuments();
-    const lastUsers = await UsersCollection.find().sort({ createdAt: -1 }).limit(3);
-    const lastUsersAvatars = lastUsers.map((user) => user.avatarUrl).filter(Boolean);
-
-    return { usersCounter, lastUsersAvatars };
-  } catch (error) {
-    console.error('Error fetching users data:', error);
-    throw error;
-  }
 };

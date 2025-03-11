@@ -1,3 +1,5 @@
+import createHttpError from 'http-errors';
+
 import { THIRTY_DAYS } from '../constants/index.js';
 import {
   signinUser,
@@ -7,12 +9,10 @@ import {
   requestResetToken,
   resetPassword,
   updateUser,
-  getUsersCounter,
 } from '../services/users.js';
-import { saveFileToCloudinary } from '../utils/cloudinary.js';
+import { saveFileToCloudinary } from '../utils/saveFileToCloudinary.js';
 import { saveFileToUploadDir } from '../utils/saveFileToUploadDir.js';
 import { getEnvVar } from '../utils/getEnvVar.js';
-import createHttpError from 'http-errors';
 
 export const signupUserController = async (req, res) => {
   const user = await signupUser(req.body);
@@ -124,9 +124,9 @@ export const resetPasswordController = async (req, res) => {
 };
 
 export const updateUserController = async (req, res, next) => {
-  const { id } = req.params;
+  const { _id: userId } = req.user;
 
-  const updatedUser = await updateUser(id, req.body, { new: true });
+  const updatedUser = await updateUser(userId, req.body, { new: true });
 
   if (!updatedUser) {
     return next(createHttpError(404, 'User not found or not updated'));
@@ -139,15 +139,15 @@ export const updateUserController = async (req, res, next) => {
   });
 };
 
+// user avatar photo
 export const updateUserAvatarController = async (req, res, next) => {
   try {
-    const { id } = req.params;
     const photo = req.file;
+    const { _id: userId } = req.user;
 
-    if (!id) {
+    if (!userId) {
       return next(createHttpError(400, 'User ID is required'));
     }
-
     if (!photo) {
       return next(createHttpError(400, 'No file uploaded'));
     }
@@ -157,7 +157,7 @@ export const updateUserAvatarController = async (req, res, next) => {
         ? await saveFileToCloudinary(photo)
         : await saveFileToUploadDir(photo);
 
-    const updatedUser = await updateUser(id, { avatarUrl });
+    const updatedUser = await updateUser(userId, { avatarUrl });
 
     if (!updatedUser) {
       return next(createHttpError(404, 'User not found or not updated'));
@@ -171,20 +171,4 @@ export const updateUserAvatarController = async (req, res, next) => {
   } catch (error) {
     next(error);
   }
-};
-
-export const getUsersCounterController = async (req, res) => {
-  const userData = await getUsersCounter();
-  const { usersCounter, lastUsersAvatars } = userData;
-
-  const responseData = {
-    status: 200,
-    message: 'Successfully got full info about registered users!',
-    data: {
-      usersCounter: usersCounter,
-      lastUsersAvatars: lastUsersAvatars,
-    },
-  };
-
-  res.status(200).json(responseData);
 };
