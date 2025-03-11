@@ -18,7 +18,7 @@ import { authenticate } from '../middlewares/authenticate.js';
 
 const router = Router();
 
-// додавання
+
 router.post(
   '/',
   authenticate,
@@ -26,7 +26,7 @@ router.post(
   ctrlWrapper(addWaterController),
 );
 
-// оновлення
+
 router.patch(
   '/:id',
   authenticate,
@@ -34,13 +34,12 @@ router.patch(
   ctrlWrapper(updateWaterController),
 );
 
-// видалення
 router.delete('/:id', authenticate, ctrlWrapper(deleteWaterController));
 
-// день
+
 router.get('/daily', authenticate, ctrlWrapper(getDailyWaterController));
 
-// місяць
+
 router.get('/monthly', authenticate, ctrlWrapper(getMonthlyWaterController));
 
 export default router;
