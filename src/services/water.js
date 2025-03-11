@@ -7,15 +7,11 @@ export const addWater = async (userId, volume, date) => {
     throw createError(400, 'The volume of water should be from 50 to 5000 ml');
   }
 
-  const formattedDate = new Date(date); // в date
-
-  // ,створює і повертає запис
-  const newWater = await WaterCollection.create({
-    volume,
-    date: formattedDate,
+  return WaterCollection.create({
     userId,
+    volume,
+    date: new Date(date),
   });
-  return newWater;
 };
 
 export const updateWater = async (userId, id, volume, date) => {
@@ -27,13 +23,9 @@ export const updateWater = async (userId, id, volume, date) => {
     throw createError(400, 'Invalid water record ID');
   }
 
-  const formattedDate = new Date(date);
-
-  // редагування, в базі є id, відправляються нові дані та повертається оновлений запис
-
   const updatedWater = await WaterCollection.findOneAndUpdate(
     { _id: id, userId },
-    { volume, date: formattedDate },
+    { volume, date: new Date(date) },
     { new: true },
   );
 
@@ -45,78 +37,41 @@ export const updateWater = async (userId, id, volume, date) => {
 };
 
 export const deleteWater = async (userId, id) => {
-  const deletedWater = await WaterCollection.findOneAndDelete({
-    _id: id,
-    userId,
-  });
-
+  const deletedWater = await WaterCollection.findOneAndDelete({ _id: id, userId });
   if (!deletedWater) {
     throw createError(404, 'No record found');
   }
-
-  return;
 };
 
 export const getDailyWater = async (userId, date) => {
   const start = new Date(date);
-  start.setHours(0, 0, 0, 0); // день починається
+  start.setHours(0, 0, 0, 0);
   const end = new Date(start);
-  end.setDate(end.getDate() + 1); // день закінчується
+  end.setDate(end.getDate() + 1);
 
-  // значення за вказаний день
-
-  const waterEntries = await WaterCollection.find({
-    userId,
-    //   фільтрація по даті
-
-    date: { $gte: start, $lt: end },
-
-    // фільтрація за датою в зворотньому напрямку
-  })
+  return WaterCollection.find({ userId, date: { $gte: start, $lt: end } })
     .sort({ date: -1 })
-    .lean(); //отримуємо прості об'єкти
-
-  return waterEntries.map((entry) => ({
-    ...entry,
-    date: new Date(entry.date), //  в Date
-  }));
+    .lean()
+    .then(entries => entries.map(entry => ({ ...entry, date: new Date(entry.date) })));
 };
 
 export const getMonthlyWater = async (userId, month) => {
-  // Параметр місяця який запрашує юзер ("2025-03")
-  const [inputYear, inputMonth] = month.split('-').map(Number);
+  const [year, monthIndex] = month.split('-').map(Number);
+  const start = new Date(year, monthIndex - 1, 1);
+  const end = new Date(year, monthIndex, 0, 23, 59, 59, 999);
 
-  // Вираховую початок і кінець місяця
-  const start = new Date(inputYear, inputMonth - 1, 1, 0, 0, 0, 0);
-  const end = new Date(inputYear, inputMonth, 0, 23, 59, 59, 999);
-
-  // Всі записи за місяць
-  const waterEntries = await WaterCollection.find({
-    userId,
-    date: { $gte: start, $lt: end },
-  })
+  const waterEntries = await WaterCollection.find({ userId, date: { $gte: start, $lt: end } })
     .sort({ date: 1 })
     .lean();
 
-  // По днях
-  const groupedByDay = waterEntries.reduce((acc, entry) => {
-    const day = new Date(entry.date).getDate(); // Число дня
-    // Додаємо обсяг води за цей день
-    acc[day] = (acc[day] || 0) + entry.volume;
+  const groupedByDay = waterEntries.reduce((acc, { date, volume }) => {
+    const day = new Date(date).getDate();
+    acc[day] = (acc[day] || 0) + volume;
     return acc;
   }, {});
 
-  // масив усіх днів місяця
-  const daysInMonth = new Date(inputYear, inputMonth, 0).getDate(); // кількість днів в місяць який треба
-
-  // відповідь масивом по дням
-  const result = Array.from({ length: daysInMonth }, (_, i) => {
-    const formattedDate = `${inputYear}-${String(inputMonth).padStart(
-      2,
-      '0',
-    )}-${String(i + 1).padStart(2, '0')}`;
-    return { date: formattedDate, stats: groupedByDay[i + 1] || 0 };
-  });
-
-  return result;
+  return Array.from({ length: new Date(year, monthIndex, 0).getDate() }, (_, i) => ({
+    date: `${year}-${String(monthIndex).padStart(2, '0')}-${String(i + 1).padStart(2, '0')}`,
+    stats: groupedByDay[i + 1] || 0,
+  }));
 };
