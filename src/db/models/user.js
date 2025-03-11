@@ -1,3 +1,4 @@
+//src/db/models/user.js
 import { model, Schema } from 'mongoose';
 
 const usersSchema = new Schema(
@@ -5,8 +6,14 @@ const usersSchema = new Schema(
     name: {
       type: String,
       default: '',
-      minlength: 2,
       maxlength: 12,
+      validate: {
+        validator: function (value) {
+          // Если строка не пустая, она должна быть длиной минимум 2 символа
+          return value === '' || value.length >= 2;
+        },
+        message: 'Name must be at least 2 characters long if provided',
+      },
     },
     email: {
       type: String,
@@ -43,7 +50,6 @@ const usersSchema = new Schema(
     avatarUrl: {
       type: String,
       default: '',
-
     },
   },
   {
@@ -53,8 +59,26 @@ const usersSchema = new Schema(
 );
 
 usersSchema.methods.toJSON = function () {
-    const { _id, name, email, gender, weight, dailySportTime, dailyNorm, avatarUrl } = this.toObject();
-    return { _id, name, email, gender, weight, dailySportTime, dailyNorm, avatarUrl };
+  const {
+    _id,
+    name,
+    email,
+    gender,
+    weight,
+    dailySportTime,
+    dailyNorm,
+    avatarUrl,
+  } = this.toObject();
+  return {
+    _id,
+    name,
+    email,
+    gender,
+    weight,
+    dailySportTime,
+    dailyNorm,
+    avatarUrl,
   };
+};
 
 export const UsersCollection = model('users', usersSchema);
