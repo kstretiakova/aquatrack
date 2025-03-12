@@ -34,8 +34,12 @@ router.post(
   validateBody(inputUserSchema),
   ctrlWrapper(signinUserController),
 );
-router.post('/refresh', ctrlWrapper(refreshUserSessionController));
-router.post('/logout', ctrlWrapper(logoutUserController));
+router.post(
+  '/refresh',
+  authenticate,
+  ctrlWrapper(refreshUserSessionController),
+);
+router.post('/logout', authenticate, ctrlWrapper(logoutUserController)); // Исправлено
 router.get('/current', authenticate, ctrlWrapper(getCurrentUserController));
 router.post(
   '/send-reset-email',
@@ -58,10 +62,10 @@ router.patch(
 router.patch(
   '/avatar',
   authenticate,
-  upload.single('avatarUrl'),
+  upload.single('avatar'),
   ctrlWrapper(updateUserAvatarController),
 );
 
-router.get('/counter', ctrlWrapper(getUsersCounterController));
+router.get('/counter', authenticate, ctrlWrapper(getUsersCounterController)); // Исправлено
 
 export default router;
