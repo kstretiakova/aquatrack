@@ -49,7 +49,7 @@ router.post(
 );
 
 router.patch(
-  '/',
+  '/update',
   authenticate,
   validateBody(updateUserSchema),
   ctrlWrapper(updateUserController),

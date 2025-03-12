@@ -8,7 +8,7 @@ required:
   - weight
   - dailySportTime
   - dailyNorm
-  - avatarUrl
+  # - avatarUrl
 
 properties:
   _id:
