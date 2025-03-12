@@ -39,8 +39,19 @@ export const signinUser = async ({ email, password }) => {
     throw createHttpError(401, 'Invalid credentials');
   }
 
+  // Удаляем старую сессию пользователя
   await SessionsCollection.deleteOne({ userId: user._id });
-  return SessionsCollection.create({ userId: user._id, ...generateSession() });
+
+  // Создаём новую сессию
+  const session = await SessionsCollection.create({
+    userId: user._id,
+    ...generateSession(),
+  });
+
+  return {
+    session, // Информация о сессии
+    user, // Информация о пользователе
+  };
 };
 
 export const refreshUsersSession = async ({ sessionId, refreshToken }) => {
