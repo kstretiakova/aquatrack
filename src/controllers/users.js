@@ -14,6 +14,7 @@ import { saveFileToCloudinary } from '../utils/saveFileToCloudinary.js';
 import { saveFileToUploadDir } from '../utils/saveFileToUploadDir.js';
 import { getEnvVar } from '../utils/getEnvVar.js';
 import { UsersCollection } from '../db/models/user.js';
+import { SessionsCollection } from '../db/models/session.js';
 
 export const signupUserController = async (req, res, next) => {
   try {
@@ -69,14 +70,11 @@ export const signinUserController = async (req, res, next) => {
       return next(createHttpError(401, 'Invalid email or password'));
     }
 
-  
     const { session } = await signinUser({ email, password });
-
 
     if (!session || !session.accessToken) {
       return next(createHttpError(500, 'Failed to generate access token'));
     }
-
 
     setupSession(res, session);
 
@@ -101,24 +99,23 @@ export const signinUserController = async (req, res, next) => {
 
 export const refreshUserSessionController = async (req, res, next) => {
   try {
-    if (!req.cookies.sessionId || !req.cookies.refreshToken) {
-      throw createHttpError(401, 'Refresh token missing');
+    const { sessionId, refreshToken } = req.cookies;
+
+    if (!sessionId || !refreshToken) {
+      return next(createHttpError(401, 'Refresh token missing'));
     }
 
-    const session = await refreshUsersSession({
-      sessionId: req.cookies.sessionId,
-      refreshToken: req.cookies.refreshToken,
-    });
+    const session = await refreshUsersSession({ sessionId, refreshToken });
 
     if (!session) {
-      throw createHttpError(401, 'Invalid refresh token');
+      return next(createHttpError(401, 'Invalid refresh token'));
     }
 
     setupSession(res, session);
 
     res.json({
       status: 200,
-      message: 'Successfully refreshed a session!',
+      message: 'Successfully refreshed session!',
       data: {
         accessToken: session.accessToken,
       },
@@ -127,10 +124,21 @@ export const refreshUserSessionController = async (req, res, next) => {
     next(error);
   }
 };
+
 export const logoutUserController = async (req, res, next) => {
   try {
-    if (req.cookies.sessionId) {
-      await logoutUser(req.cookies.sessionId);
+    const { sessionId } = req.cookies;
+
+    if (!sessionId) {
+      return next(createHttpError(401, 'No active session found'));
+    }
+
+    const deletedSession = await SessionsCollection.findByIdAndDelete(
+      sessionId,
+    );
+
+    if (!deletedSession) {
+      return next(createHttpError(404, 'Session not found'));
     }
 
     res.clearCookie('sessionId');
