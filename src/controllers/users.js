@@ -37,15 +37,22 @@ const setupSession = (res, session) => {
 };
 
 export const signinUserController = async (req, res) => {
-  const session = await signinUser(req.body);
+  const { session, user } = await signinUser(req.body);
 
   setupSession(res, session);
 
   res.json({
     status: 200,
-    message: 'Successfully logged in an user!',
+    message: 'Successfully logged in a user!',
     data: {
       accessToken: session.accessToken,
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        gender: user.gender,
+        dailyNorm: user.dailyNorm, // Норма воды
+      },
     },
   });
 };
