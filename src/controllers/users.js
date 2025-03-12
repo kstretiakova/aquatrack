@@ -77,6 +77,13 @@ export const signinUserController = async (req, res, next) => {
       message: 'Successfully logged in!',
       data: {
         accessToken: session.accessToken,
+        user: {
+          id: user._id,
+          name: user.name,
+          email: user.email,
+          gender: user.gender,
+          dailyNorm: user.dailyNorm,
+        },
       },
     });
   } catch (error) {
@@ -112,7 +119,6 @@ export const refreshUserSessionController = async (req, res, next) => {
     next(error);
   }
 };
-
 export const logoutUserController = async (req, res, next) => {
   try {
     if (req.cookies.sessionId) {
