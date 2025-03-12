@@ -69,7 +69,15 @@ export const signinUserController = async (req, res, next) => {
       return next(createHttpError(401, 'Invalid email or password'));
     }
 
-    const session = await signinUser({ email, password });
+  
+    const { session } = await signinUser({ email, password });
+
+
+    if (!session || !session.accessToken) {
+      return next(createHttpError(500, 'Failed to generate access token'));
+    }
+
+
     setupSession(res, session);
 
     res.json({

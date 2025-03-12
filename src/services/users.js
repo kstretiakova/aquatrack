@@ -39,18 +39,22 @@ export const signinUser = async ({ email, password }) => {
     throw createHttpError(401, 'Invalid credentials');
   }
 
-  // Удаляем старую сессию пользователя
   await SessionsCollection.deleteOne({ userId: user._id });
 
-  // Создаём новую сессию
+  const sessionData = generateSession();
+
   const session = await SessionsCollection.create({
     userId: user._id,
-    ...generateSession(),
+    ...sessionData,
   });
 
+  if (!session.accessToken) {
+    throw createHttpError(500, 'Failed to generate access token');
+  }
+
   return {
-    session, // Информация о сессии
-    user, // Информация о пользователе
+    session,
+    user,
   };
 };
 
