@@ -484,7 +484,7 @@
                   "email": {
                     "description": "User Email",
                     "type": "string",
-                    "example": "tymchuk.developer@gmail.com"
+                    "example": "kseniia@gmail.com"
                   },
                   "password": {
                     "description": "User Password",
