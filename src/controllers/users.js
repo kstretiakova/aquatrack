@@ -35,25 +35,26 @@ const setupSession = (res, session) => {
     expires: new Date(Date.now() + THIRTY_DAYS),
   });
 };
-
 export const signinUserController = async (req, res) => {
-  const { session, user } = await signinUser(req.body);
+  const { session, user } = await signinUser(req.body); // signinUser возвращает session и user
 
-  setupSession(res, session);
+  setupSession(res, session); // Устанавливаем сессию через cookies или headers
 
-  res.json({
-    status: 200,
-    message: 'Successfully logged in a user!',
-    data: {
-      accessToken: session.accessToken,
-      user: {
-        id: user._id,
-        name: user.name,
-        email: user.email,
-        gender: user.gender,
-        dailyNorm: user.dailyNorm, // Норма воды
-      },
+  // Извлекаем accessToken и refreshToken из session
+  const { accessToken, refreshToken } = session;
+
+  res.status(200).json({
+    user: {
+      email: user.email,
+      name: user.name,
+      gender: user.gender || 'woman', // Добавляем дефолтное значение для gender
+      avatar: user.avatar,
+      weight: user.weight,
+      sportsActivity: user.sportsActivity,
+      waterRate: user.waterRate,
     },
+    accessToken, // Добавляем accessToken
+    refreshToken, // Добавляем refreshToken
   });
 };
 
