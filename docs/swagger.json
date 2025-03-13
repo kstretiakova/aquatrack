@@ -2,12 +2,12 @@
   "openapi": "3.1.0",
   "info": {
     "version": "1.0.0",
-    "title": "AquaTrack Application",
+    "title": "AquaTrack",
     "license": {
       "name": "AquaTrack",
       "url": "https://aqua-track-phi.vercel.app/"
     },
-    "description": "Team 6"
+    "description": "AquaTrack Team 6"
   },
   "servers": [
     {
@@ -772,7 +772,7 @@
                   "gender": {
                     "description": "User's gender",
                     "type": "string",
-                    "example": "fefemale"
+                    "example": "female"
                   },
                   "weight": {
                     "description": "User's weight",
