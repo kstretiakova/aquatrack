@@ -34,13 +34,9 @@ router.post(
   validateBody(inputUserSchema),
   ctrlWrapper(signinUserController),
 );
-router.post(
-  '/refresh',
-  authenticate,
-  ctrlWrapper(refreshUserSessionController),
-);
-router.post('/logout', authenticate, ctrlWrapper(logoutUserController)); // Исправлено
-router.get('/current', authenticate, ctrlWrapper(getCurrentUserController));
+router.post('/refresh', ctrlWrapper(refreshUserSessionController));
+router.post('/logout', ctrlWrapper(logoutUserController));
+router.get('/current', ctrlWrapper(getCurrentUserController));
 router.post(
   '/send-reset-email',
   validateBody(requestResetEmailSchema),

@@ -99,23 +99,22 @@ export const signinUserController = async (req, res, next) => {
 
 export const refreshUserSessionController = async (req, res, next) => {
   try {
-    const { sessionId, refreshToken } = req.cookies;
-
-    if (!sessionId || !refreshToken) {
-      return next(createHttpError(401, 'Refresh token missing'));
+    const { refreshToken } = req.cookies;
+    if (!refreshToken) {
+      return res.status(401).json({
+        status: 401,
+        message: 'Unauthorized: No refresh token',
+      });
     }
+    const session = await refreshUsersSession(refreshToken);
 
-    const session = await refreshUsersSession({ sessionId, refreshToken });
-
-    if (!session) {
-      return next(createHttpError(401, 'Invalid refresh token'));
-    }
-
-    setupSession(res, session);
-
-    res.json({
+    res.cookie('refreshToken', session.refreshToken, {
+      httpOnly: true,
+      maxAge: 30 * 24 * 60 * 60 * 1000,
+    });
+    res.status(200).json({
       status: 200,
-      message: 'Successfully refreshed session!',
+      message: 'Successfully refreshed a session!',
       data: {
         accessToken: session.accessToken,
       },
@@ -124,32 +123,23 @@ export const refreshUserSessionController = async (req, res, next) => {
     next(error);
   }
 };
-
 export const logoutUserController = async (req, res, next) => {
   try {
-    const { sessionId } = req.cookies;
+    const { refreshToken } = req.cookies;
 
-    if (!sessionId) {
-      return next(createHttpError(401, 'No active session found'));
+    if (!refreshToken) {
+      return res.status(401).json({
+        status: 401,
+        message: 'Unauthorized: No refresh token',
+      });
     }
-
-    const deletedSession = await SessionsCollection.findByIdAndDelete(
-      sessionId,
-    );
-
-    if (!deletedSession) {
-      return next(createHttpError(404, 'Session not found'));
-    }
-
-    res.clearCookie('sessionId');
+    await logoutUser(refreshToken);
     res.clearCookie('refreshToken');
-
     res.status(204).send();
   } catch (error) {
     next(error);
   }
 };
-
 export const getCurrentUserController = async (req, res, next) => {
   try {
     const {
