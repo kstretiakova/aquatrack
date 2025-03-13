@@ -729,28 +729,17 @@
         }
       }
     },
-    "/users/{id}": {
+    "/users/update": {
       "patch": {
         "tags": [
           "Users"
         ],
         "summary": "Update User Data",
         "operationId": "patchUser",
-        "description": "Update the data about user by id with payload",
+        "description": "Update the data about user with payload",
         "security": [
           {
             "bearerAuth": []
-          }
-        ],
-        "parameters": [
-          {
-            "in": "path",
-            "name": "id",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "example": "65ca67e7ae7f10c88b598008"
-            }
           }
         ],
         "requestBody": {
@@ -828,11 +817,14 @@
           },
           "401": {
             "$ref": "#/components/responses/401"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
           }
         }
       }
     },
-    "/users/{id}/avatar": {
+    "/users/avatar": {
       "patch": {
         "tags": [
           "Users"
@@ -843,17 +835,6 @@
         "security": [
           {
             "bearerAuth": []
-          }
-        ],
-        "parameters": [
-          {
-            "in": "path",
-            "name": "id",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "example": "65ca67e7ae7f10c88b598008"
-            }
           }
         ],
         "requestBody": {
@@ -874,7 +855,7 @@
         },
         "responses": {
           "200": {
-            "description": "Successfully patched a user avatar!",
+            "description": "Successfully updated user avatar",
             "content": {
               "application/json": {
                 "schema": {
@@ -891,7 +872,7 @@
                     },
                     "message": {
                       "type": "string",
-                      "example": "Successfully patched a user avatar!"
+                      "example": "Successfully updated user avatar"
                     },
                     "data": {
                       "$ref": "#/components/schemas/user"
@@ -906,6 +887,9 @@
           },
           "401": {
             "$ref": "#/components/responses/401"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
           }
         }
       }
@@ -1335,8 +1319,7 @@
           "gender",
           "weight",
           "dailySportTime",
-          "dailyNorm",
-          "avatarUrl"
+          "dailyNorm"
         ],
         "properties": {
           "_id": {
@@ -1529,6 +1512,43 @@
                     "message": {
                       "type": "string",
                       "example": "Email in use"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "500": {
+        "description": "ServerError",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "required": [
+                "status",
+                "message",
+                "data"
+              ],
+              "properties": {
+                "status": {
+                  "type": "integer",
+                  "example": 500
+                },
+                "message": {
+                  "type": "string",
+                  "example": "Internal Server Error"
+                },
+                "data": {
+                  "type": "object",
+                  "required": [
+                    "message"
+                  ],
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Something went wrong"
                     }
                   }
                 }
