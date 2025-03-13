@@ -33,11 +33,15 @@ export const signupUserController = async (req, res, next) => {
     });
 
     res.status(201).json({
-      status: 201,
       message: 'Successfully registered a user!',
-      data: {
-        _id: newUser._id,
+      user: {
         email: newUser.email,
+        name: newUser.name,
+        gender: newUser.gender,
+        avatar: newUser.avatarUrl,
+        weight: newUser.weight,
+        dailySportTime: newUser.dailySportTime,
+        dailyNorm: newUser.dailyNorm,
       },
     });
   } catch (error) {
@@ -78,19 +82,18 @@ export const signinUserController = async (req, res, next) => {
 
     setupSession(res, session);
 
-    res.json({
-      status: 200,
+    res.status(200).json({
       message: 'Successfully logged in!',
-      data: {
-        accessToken: session.accessToken,
-        user: {
-          id: user._id,
-          name: user.name,
-          email: user.email,
-          gender: user.gender,
-          dailyNorm: user.dailyNorm,
-        },
+      user: {
+        email: user.email,
+        name: user.name,
+        gender: user.gender,
+        avatar: user.avatarUrl,
+        weight: user.weight,
+        dailySportTime: user.dailySportTime,
+        dailyNorm: user.dailyNorm,
       },
+      accessToken: session.accessToken,
     });
   } catch (error) {
     next(error);
