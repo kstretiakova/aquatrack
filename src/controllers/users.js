@@ -36,25 +36,24 @@ const setupSession = (res, session) => {
   });
 };
 export const signinUserController = async (req, res) => {
-  const { session, user } = await signinUser(req.body); // signinUser возвращает session и user
+  const { session, user } = await signinUser(req.body);
 
-  setupSession(res, session); // Устанавливаем сессию через cookies или headers
+  setupSession(res, session);
 
-  // Извлекаем accessToken и refreshToken из session
   const { accessToken, refreshToken } = session;
 
   res.status(200).json({
     user: {
       email: user.email,
       name: user.name,
-      gender: user.gender || 'woman', // Добавляем дефолтное значение для gender
+      gender: user.gender,
       avatar: user.avatar,
       weight: user.weight,
-      sportsActivity: user.sportsActivity,
-      waterRate: user.waterRate,
+      dailySportTime: user.dailySportTime,
+      dailyNorm: user.dailyNorm,
     },
-    accessToken, // Добавляем accessToken
-    refreshToken, // Добавляем refreshToken
+    accessToken,
+    refreshToken,
   });
 };
 
