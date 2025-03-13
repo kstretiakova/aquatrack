@@ -33,7 +33,6 @@ export const signupUserController = async (req, res, next) => {
     });
 
     res.status(201).json({
-      status: 201,
       message: 'Successfully registered a user!',
       user: {
         email: newUser.email,
@@ -84,6 +83,7 @@ export const signinUserController = async (req, res, next) => {
     setupSession(res, session);
 
     res.status(200).json({
+      message: 'Successfully logged in!',
       user: {
         email: user.email,
         name: user.name,
