@@ -170,19 +170,22 @@ export const getCurrentUserController = async (req, res, next) => {
       dailyNorm,
       avatarUrl,
     } = req.user;
+
+    const { sessionId, refreshToken } = req.cookies;
+
     res.status(200).json({
-      status: 200,
-      message: 'Current user retrieved successfully!',
-      data: {
+      user: {
         _id,
-        name,
         email,
+        name,
         gender,
+        avatar: avatarUrl,
         weight,
         dailySportTime,
         dailyNorm,
-        avatarUrl,
       },
+      sessionId,
+      refreshToken,
     });
   } catch (error) {
     next(error);
