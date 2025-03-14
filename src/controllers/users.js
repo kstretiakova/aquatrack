@@ -103,24 +103,32 @@ export const signinUserController = async (req, res, next) => {
 export const refreshUserSessionController = async (req, res, next) => {
   try {
     const { sessionId, refreshToken } = req.cookies;
-
     if (!sessionId || !refreshToken) {
       return next(createHttpError(401, 'Refresh token missing'));
     }
-
     const session = await refreshUsersSession({ sessionId, refreshToken });
-
     if (!session) {
       return next(createHttpError(401, 'Invalid refresh token'));
     }
-
+    const user = await UsersCollection.findById(session.userId);
+    if (!user) {
+      return next(createHttpError(404, 'User not found'));
+    }
     setupSession(res, session);
-
-    res.json({
+    res.status(200).json({
       status: 200,
       message: 'Successfully refreshed session!',
-      data: {
-        accessToken: session.accessToken,
+      sessionId: session._id,
+      accessToken: session.accessToken,
+      refreshToken: session.refreshToken,
+      user: {
+        email: user.email,
+        name: user.name,
+        gender: user.gender,
+        avatar: user.avatarUrl,
+        weight: user.weight,
+        dailySportTime: user.dailySportTime,
+        dailyNorm: user.dailyNorm,
       },
     });
   } catch (error) {
@@ -130,22 +138,19 @@ export const refreshUserSessionController = async (req, res, next) => {
 
 export const logoutUserController = async (req, res, next) => {
   try {
-    const { sessionId } = req.cookies;
+    const { sessionId, refreshToken } = req.cookies;
 
-    if (!sessionId) {
-      return next(createHttpError(401, 'No active session found'));
+    if (!sessionId || !refreshToken) {
+      return res.status(401).json({
+        status: 401,
+        message: 'Unauthorized: Missing session or refresh token',
+      });
     }
 
-    const deletedSession = await SessionsCollection.findByIdAndDelete(
-      sessionId,
-    );
+    await logoutUser(sessionId);
 
-    if (!deletedSession) {
-      return next(createHttpError(404, 'Session not found'));
-    }
-
-    res.clearCookie('sessionId');
-    res.clearCookie('refreshToken');
+    res.clearCookie('refreshToken', { httpOnly: true });
+    res.clearCookie('sessionId', { httpOnly: true });
 
     res.status(204).send();
   } catch (error) {
@@ -165,8 +170,7 @@ export const getCurrentUserController = async (req, res, next) => {
       dailyNorm,
       avatarUrl,
     } = req.user;
-
-    res.json({
+    res.status(200).json({
       status: 200,
       message: 'Current user retrieved successfully!',
       data: {

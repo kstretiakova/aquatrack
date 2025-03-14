@@ -2,6 +2,7 @@ import { Router } from 'express';
 import { ctrlWrapper } from '../utils/ctrlWrapper.js';
 import {
   inputUserSchema,
+  refreshTokenSchema,
   requestResetEmailSchema,
   resetPasswordSchema,
 } from '../validation/users.js';
@@ -36,11 +37,11 @@ router.post(
 );
 router.post(
   '/refresh',
-  authenticate,
+  validateBody(refreshTokenSchema),
   ctrlWrapper(refreshUserSessionController),
 );
-router.post('/logout', authenticate, ctrlWrapper(logoutUserController)); // Исправлено
-router.get('/current', authenticate, ctrlWrapper(getCurrentUserController));
+router.post('/logout', ctrlWrapper(logoutUserController));
+router.get('/current', ctrlWrapper(getCurrentUserController));
 router.post(
   '/send-reset-email',
   validateBody(requestResetEmailSchema),

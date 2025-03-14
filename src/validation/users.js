@@ -18,6 +18,10 @@ export const updateUserSchema = Joi.object({
     'object.missing': 'At least one field to update must be specified',
   });
 
+export const refreshTokenSchema = Joi.object({
+  refreshToken: Joi.string(),
+  sessionId: Joi.string(),
+});
 export const updateUserAvatarSchema = Joi.object({
   avatarUrl: Joi.string().required(),
 });
