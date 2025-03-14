@@ -114,6 +114,12 @@ export const refreshUserSessionController = async (req, res, next) => {
       return next(createHttpError(401, 'Invalid refresh token'));
     }
 
+    const user = await UsersCollection.findById(session.userId);
+
+    if (!user) {
+      return next(createHttpError(404, 'User not found'));
+    }
+
     setupSession(res, session);
 
     res.status(200).json({
@@ -121,6 +127,15 @@ export const refreshUserSessionController = async (req, res, next) => {
       message: 'Successfully refreshed session!',
       data: {
         accessToken: session.accessToken,
+        user: {
+          email: user.email,
+          name: user.name,
+          gender: user.gender,
+          avatar: user.avatarUrl,
+          weight: user.weight,
+          dailySportTime: user.dailySportTime,
+          dailyNorm: user.dailyNorm,
+        },
       },
     });
   } catch (error) {
@@ -130,46 +145,70 @@ export const refreshUserSessionController = async (req, res, next) => {
 
 export const logoutUserController = async (req, res, next) => {
   try {
-    const { refreshToken } = req.cookies;
+    const { sessionId, refreshToken } = req.cookies;
 
-    if (!refreshToken) {
+    if (!sessionId || !refreshToken) {
       return res.status(401).json({
         status: 401,
-        message: 'Unauthorized: No refresh token',
+        message: 'Unauthorized: Missing session or refresh token',
       });
     }
-    await logoutUser(refreshToken);
-    res.clearCookie('refreshToken');
+
+    await logoutUser(sessionId);
+
+    res.clearCookie('refreshToken', { httpOnly: true });
+    res.clearCookie('sessionId', { httpOnly: true });
+
     res.status(204).send();
   } catch (error) {
     next(error);
   }
 };
+
 export const getCurrentUserController = async (req, res, next) => {
   try {
-    const {
-      _id,
-      name,
-      email,
-      gender,
-      weight,
-      dailySportTime,
-      dailyNorm,
-      avatarUrl,
-    } = req.user;
+    const { sessionId } = req.cookies;
+
+    if (!sessionId) {
+      return res.status(401).json({
+        status: 401,
+        message: 'Unauthorized: Missing session',
+      });
+    }
+
+    const session = await SessionsCollection.findOne({ _id: sessionId });
+
+    if (!session) {
+      return res.status(401).json({
+        status: 401,
+        message: 'Unauthorized: Invalid session',
+      });
+    }
+
+    const user = await UsersCollection.findById(session.userId);
+
+    if (!user) {
+      return res.status(404).json({
+        status: 404,
+        message: 'User not found',
+      });
+    }
 
     res.status(200).json({
       status: 200,
       message: 'Current user retrieved successfully!',
       data: {
-        _id,
-        name,
-        email,
-        gender,
-        weight,
-        dailySportTime,
-        dailyNorm,
-        avatarUrl,
+        accessToken: session.accessToken,
+        user: {
+          _id: user._id,
+          name: user.name,
+          email: user.email,
+          gender: user.gender,
+          weight: user.weight,
+          dailySportTime: user.dailySportTime,
+          dailyNorm: user.dailyNorm,
+          avatarUrl: user.avatarUrl,
+        },
       },
     });
   } catch (error) {
