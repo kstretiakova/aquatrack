@@ -3,7 +3,7 @@ import Joi from 'joi';
 export const updateUserSchema = Joi.object({
   name: Joi.string().min(2).max(12),
   email: Joi.string().email(),
-  gender: Joi.string().valid('male', 'female', 'none'),
+  gender: Joi.string().valid('man', 'woman'),
   weight: Joi.number().min(0).max(250),
   dailySportTime: Joi.number().min(0).max(24).precision(1).messages({
     'number.base': 'dailySportTime must be a number',

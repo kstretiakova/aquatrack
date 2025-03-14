@@ -27,9 +27,7 @@
   "paths": {
     "/water/daily": {
       "get": {
-        "tags": [
-          "Water"
-        ],
+        "tags": ["Water"],
         "summary": "Get daily water",
         "operationId": "getDailyWater",
         "description": "Get list of daily waters with this endpoint",
@@ -56,11 +54,7 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": [
-                    "status",
-                    "message",
-                    "data"
-                  ],
+                  "required": ["status", "message", "data"],
                   "properties": {
                     "status": {
                       "type": "integer",
@@ -89,9 +83,7 @@
     },
     "/water/monthly": {
       "get": {
-        "tags": [
-          "Water"
-        ],
+        "tags": ["Water"],
         "summary": "Get monthly water",
         "operationId": "getMonthlyWater",
         "description": "Get list of monthly waters with this endpoint",
@@ -118,11 +110,7 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": [
-                    "status",
-                    "message",
-                    "data"
-                  ],
+                  "required": ["status", "message", "data"],
                   "properties": {
                     "status": {
                       "type": "integer",
@@ -136,10 +124,7 @@
                       "type": "array",
                       "items": {
                         "type": "object",
-                        "required": [
-                          "date",
-                          "stats"
-                        ],
+                        "required": ["date", "stats"],
                         "properties": {
                           "date": {
                             "description": "Day with total amount of water drunk",
@@ -167,9 +152,7 @@
     },
     "/water": {
       "post": {
-        "tags": [
-          "Water"
-        ],
+        "tags": ["Water"],
         "summary": "Create data of water portion",
         "operationId": "addWater",
         "description": "Create data of water portion with payload",
@@ -183,10 +166,7 @@
             "application/json": {
               "schema": {
                 "type": "object",
-                "required": [
-                  "volume",
-                  "date"
-                ],
+                "required": ["volume", "date"],
                 "properties": {
                   "volume": {
                     "description": "The amount of water drunk, ml",
@@ -210,11 +190,7 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": [
-                    "status",
-                    "message",
-                    "data"
-                  ],
+                  "required": ["status", "message", "data"],
                   "properties": {
                     "status": {
                       "type": "integer",
@@ -241,9 +217,7 @@
     },
     "/water/{id}": {
       "patch": {
-        "tags": [
-          "Water"
-        ],
+        "tags": ["Water"],
         "summary": "Update data of water portion",
         "operationId": "updateWater",
         "description": "Update the data about the portion of water by id with payload",
@@ -291,11 +265,7 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": [
-                    "status",
-                    "message",
-                    "data"
-                  ],
+                  "required": ["status", "message", "data"],
                   "properties": {
                     "status": {
                       "type": "integer",
@@ -320,9 +290,7 @@
         }
       },
       "delete": {
-        "tags": [
-          "Water"
-        ],
+        "tags": ["Water"],
         "summary": "Delete data of water portion",
         "operationId": "deleteWater",
         "description": "Delete the data about the portion of water",
@@ -354,9 +322,7 @@
     },
     "/users/signup": {
       "post": {
-        "tags": [
-          "Users"
-        ],
+        "tags": ["Users"],
         "summary": "Register User",
         "operationId": "signupUser",
         "description": "Registration a new User in the Application",
@@ -366,10 +332,7 @@
             "application/json": {
               "schema": {
                 "type": "object",
-                "required": [
-                  "email",
-                  "password"
-                ],
+                "required": ["email", "password"],
                 "properties": {
                   "email": {
                     "description": "User Email",
@@ -429,7 +392,7 @@
                     "gender": {
                       "description": "User's gender",
                       "type": "string",
-                      "example": "female"
+                      "example": "woman"
                     },
                     "weight": {
                       "description": "User's weight",
@@ -464,9 +427,7 @@
     },
     "/users/signin": {
       "post": {
-        "tags": [
-          "Users"
-        ],
+        "tags": ["Users"],
         "summary": "Login User",
         "operationId": "signinUser",
         "description": "Login User in the Application",
@@ -476,10 +437,7 @@
             "application/json": {
               "schema": {
                 "type": "object",
-                "required": [
-                  "email",
-                  "password"
-                ],
+                "required": ["email", "password"],
                 "properties": {
                   "email": {
                     "description": "User Email",
@@ -503,11 +461,7 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": [
-                    "status",
-                    "message",
-                    "data"
-                  ],
+                  "required": ["status", "message", "data"],
                   "properties": {
                     "status": {
                       "type": "integer",
@@ -519,9 +473,7 @@
                     },
                     "data": {
                       "type": "object",
-                      "required": [
-                        "accessToken"
-                      ],
+                      "required": ["accessToken"],
                       "properties": {
                         "accessToken": {
                           "type": "string",
@@ -540,11 +492,7 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": [
-                    "status",
-                    "message",
-                    "data"
-                  ],
+                  "required": ["status", "message", "data"],
                   "properties": {
                     "status": {
                       "type": "integer",
@@ -556,9 +504,7 @@
                     },
                     "data": {
                       "type": "object",
-                      "required": [
-                        "message"
-                      ],
+                      "required": ["message"],
                       "properties": {
                         "message": {
                           "type": "string",
@@ -576,9 +522,7 @@
     },
     "/users/refresh": {
       "post": {
-        "tags": [
-          "Users"
-        ],
+        "tags": ["Users"],
         "summary": "Refresh Users Session",
         "operationId": "refreshUsersSession",
         "description": "Refresh Users Session in the Application",
@@ -590,11 +534,7 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": [
-                    "status",
-                    "message",
-                    "data"
-                  ],
+                  "required": ["status", "message", "data"],
                   "properties": {
                     "status": {
                       "type": "integer",
@@ -606,9 +546,7 @@
                     },
                     "data": {
                       "type": "object",
-                      "required": [
-                        "accessToken"
-                      ],
+                      "required": ["accessToken"],
                       "properties": {
                         "accessToken": {
                           "type": "string",
@@ -627,11 +565,7 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": [
-                    "status",
-                    "message",
-                    "data"
-                  ],
+                  "required": ["status", "message", "data"],
                   "properties": {
                     "status": {
                       "type": "integer",
@@ -643,9 +577,7 @@
                     },
                     "data": {
                       "type": "object",
-                      "required": [
-                        "message"
-                      ],
+                      "required": ["message"],
                       "properties": {
                         "message": {
                           "type": "string",
@@ -663,9 +595,7 @@
     },
     "/users/logout": {
       "post": {
-        "tags": [
-          "Users"
-        ],
+        "tags": ["Users"],
         "summary": "Logout User",
         "operationId": "logoutUser",
         "description": "Logout User from the Application",
@@ -683,9 +613,7 @@
     },
     "/users/current": {
       "get": {
-        "tags": [
-          "Users"
-        ],
+        "tags": ["Users"],
         "summary": "Get info about current User",
         "operationId": "currentUser",
         "description": "Get full info about current User",
@@ -701,11 +629,7 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": [
-                    "status",
-                    "message",
-                    "data"
-                  ],
+                  "required": ["status", "message", "data"],
                   "properties": {
                     "status": {
                       "type": "integer",
@@ -731,9 +655,7 @@
     },
     "/users/update": {
       "patch": {
-        "tags": [
-          "Users"
-        ],
+        "tags": ["Users"],
         "summary": "Update User Data",
         "operationId": "patchUser",
         "description": "Update the data about user with payload",
@@ -761,7 +683,7 @@
                   "gender": {
                     "description": "User's gender",
                     "type": "string",
-                    "example": "female"
+                    "example": "woman"
                   },
                   "weight": {
                     "description": "User's weight",
@@ -790,11 +712,7 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": [
-                    "status",
-                    "message",
-                    "data"
-                  ],
+                  "required": ["status", "message", "data"],
                   "properties": {
                     "status": {
                       "type": "integer",
@@ -826,9 +744,7 @@
     },
     "/users/avatar": {
       "patch": {
-        "tags": [
-          "Users"
-        ],
+        "tags": ["Users"],
         "summary": "Update User Avatar",
         "operationId": "patchUserAvatar",
         "description": "Update the avatar user by id with binary image",
@@ -860,11 +776,7 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": [
-                    "status",
-                    "message",
-                    "data"
-                  ],
+                  "required": ["status", "message", "data"],
                   "properties": {
                     "status": {
                       "type": "integer",
@@ -896,9 +808,7 @@
     },
     "/users/counter": {
       "get": {
-        "tags": [
-          "Users"
-        ],
+        "tags": ["Users"],
         "summary": "Get registered users counter",
         "operationId": "counterUsers",
         "description": "Get some info about registered users",
@@ -910,11 +820,7 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": [
-                    "status",
-                    "message",
-                    "data"
-                  ],
+                  "required": ["status", "message", "data"],
                   "properties": {
                     "status": {
                       "type": "integer",
@@ -926,10 +832,7 @@
                     },
                     "data": {
                       "type": "object",
-                      "required": [
-                        "usersCounter",
-                        "lastUsersAvatars"
-                      ],
+                      "required": ["usersCounter", "lastUsersAvatars"],
                       "properties": {
                         "usersCounter": {
                           "type": "number",
@@ -954,9 +857,7 @@
     },
     "/users/get-oauth-url": {
       "get": {
-        "tags": [
-          "Users"
-        ],
+        "tags": ["Users"],
         "summary": "Get OAuth URL",
         "operationId": "generateAuthUrl",
         "description": "Get OAuth with this endpoint",
@@ -968,11 +869,7 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": [
-                    "status",
-                    "message",
-                    "data"
-                  ],
+                  "required": ["status", "message", "data"],
                   "properties": {
                     "status": {
                       "type": "integer",
@@ -984,9 +881,7 @@
                     },
                     "data": {
                       "type": "object",
-                      "required": [
-                        "url"
-                      ],
+                      "required": ["url"],
                       "properties": {
                         "url": {
                           "type": "string",
@@ -1004,9 +899,7 @@
     },
     "/users/confirm-oauth": {
       "post": {
-        "tags": [
-          "Users"
-        ],
+        "tags": ["Users"],
         "summary": "Confirm OAuth",
         "operationId": "loginOrSignUpWithGoogle",
         "description": "Confirm login Or SignUp With Google",
@@ -1016,9 +909,7 @@
             "application/json": {
               "schema": {
                 "type": "object",
-                "required": [
-                  "code"
-                ],
+                "required": ["code"],
                 "properties": {
                   "code": {
                     "description": "login Ticket",
@@ -1036,11 +927,7 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": [
-                    "status",
-                    "message",
-                    "data"
-                  ],
+                  "required": ["status", "message", "data"],
                   "properties": {
                     "status": {
                       "type": "integer",
@@ -1052,9 +939,7 @@
                     },
                     "data": {
                       "type": "object",
-                      "required": [
-                        "accessToken"
-                      ],
+                      "required": ["accessToken"],
                       "properties": {
                         "accessToken": {
                           "type": "string",
@@ -1072,9 +957,7 @@
     },
     "/users/send-reset-email": {
       "post": {
-        "tags": [
-          "Users"
-        ],
+        "tags": ["Users"],
         "summary": "Send reset to email",
         "operationId": "sendResetToken",
         "description": "Send reset password message to email from the Application",
@@ -1084,9 +967,7 @@
             "application/json": {
               "schema": {
                 "type": "object",
-                "required": [
-                  "email"
-                ],
+                "required": ["email"],
                 "properties": {
                   "email": {
                     "description": "User Email",
@@ -1104,11 +985,7 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": [
-                    "status",
-                    "message",
-                    "data"
-                  ],
+                  "required": ["status", "message", "data"],
                   "properties": {
                     "status": {
                       "type": "integer",
@@ -1133,11 +1010,7 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": [
-                    "status",
-                    "message",
-                    "data"
-                  ],
+                  "required": ["status", "message", "data"],
                   "properties": {
                     "status": {
                       "type": "integer",
@@ -1149,9 +1022,7 @@
                     },
                     "data": {
                       "type": "object",
-                      "required": [
-                        "message"
-                      ],
+                      "required": ["message"],
                       "properties": {
                         "message": {
                           "type": "string",
@@ -1169,9 +1040,7 @@
     },
     "/users/reset-password": {
       "post": {
-        "tags": [
-          "Users"
-        ],
+        "tags": ["Users"],
         "summary": "Reset password",
         "operationId": "resetPassword",
         "description": "Reset password from email message in the Application",
@@ -1181,10 +1050,7 @@
             "application/json": {
               "schema": {
                 "type": "object",
-                "required": [
-                  "token",
-                  "password"
-                ],
+                "required": ["token", "password"],
                 "properties": {
                   "token": {
                     "description": "JWT Token from email",
@@ -1206,11 +1072,7 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": [
-                    "status",
-                    "message",
-                    "data"
-                  ],
+                  "required": ["status", "message", "data"],
                   "properties": {
                     "status": {
                       "type": "integer",
@@ -1235,11 +1097,7 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": [
-                    "status",
-                    "message",
-                    "data"
-                  ],
+                  "required": ["status", "message", "data"],
                   "properties": {
                     "status": {
                       "type": "integer",
@@ -1251,9 +1109,7 @@
                     },
                     "data": {
                       "type": "object",
-                      "required": [
-                        "message"
-                      ],
+                      "required": ["message"],
                       "properties": {
                         "message": {
                           "type": "string",
@@ -1280,12 +1136,7 @@
     "schemas": {
       "water": {
         "type": "object",
-        "required": [
-          "_id",
-          "volume",
-          "date",
-          "userId"
-        ],
+        "required": ["_id", "volume", "date", "userId"],
         "properties": {
           "_id": {
             "description": "Backend-generated unique identifier",
@@ -1346,7 +1197,7 @@
           "gender": {
             "description": "User's gender",
             "type": "string",
-            "example": "female"
+            "example": "woman"
           },
           "weight": {
             "description": "User's weight",
@@ -1378,11 +1229,7 @@
           "application/json": {
             "schema": {
               "type": "object",
-              "required": [
-                "status",
-                "message",
-                "data"
-              ],
+              "required": ["status", "message", "data"],
               "properties": {
                 "status": {
                   "type": "integer",
@@ -1394,9 +1241,7 @@
                 },
                 "data": {
                   "type": "object",
-                  "required": [
-                    "message"
-                  ],
+                  "required": ["message"],
                   "properties": {
                     "message": {
                       "type": "string",
@@ -1415,11 +1260,7 @@
           "application/json": {
             "schema": {
               "type": "object",
-              "required": [
-                "status",
-                "message",
-                "data"
-              ],
+              "required": ["status", "message", "data"],
               "properties": {
                 "status": {
                   "type": "integer",
@@ -1431,9 +1272,7 @@
                 },
                 "data": {
                   "type": "object",
-                  "required": [
-                    "message"
-                  ],
+                  "required": ["message"],
                   "properties": {
                     "message": {
                       "type": "string",
@@ -1452,11 +1291,7 @@
           "application/json": {
             "schema": {
               "type": "object",
-              "required": [
-                "status",
-                "message",
-                "data"
-              ],
+              "required": ["status", "message", "data"],
               "properties": {
                 "status": {
                   "type": "integer",
@@ -1468,9 +1303,7 @@
                 },
                 "data": {
                   "type": "object",
-                  "required": [
-                    "message"
-                  ],
+                  "required": ["message"],
                   "properties": {
                     "message": {
                       "type": "string",
@@ -1489,11 +1322,7 @@
           "application/json": {
             "schema": {
               "type": "object",
-              "required": [
-                "status",
-                "message",
-                "data"
-              ],
+              "required": ["status", "message", "data"],
               "properties": {
                 "status": {
                   "type": "integer",
@@ -1505,9 +1334,7 @@
                 },
                 "data": {
                   "type": "object",
-                  "required": [
-                    "message"
-                  ],
+                  "required": ["message"],
                   "properties": {
                     "message": {
                       "type": "string",
@@ -1526,11 +1353,7 @@
           "application/json": {
             "schema": {
               "type": "object",
-              "required": [
-                "status",
-                "message",
-                "data"
-              ],
+              "required": ["status", "message", "data"],
               "properties": {
                 "status": {
                   "type": "integer",
@@ -1542,9 +1365,7 @@
                 },
                 "data": {
                   "type": "object",
-                  "required": [
-                    "message"
-                  ],
+                  "required": ["message"],
                   "properties": {
                     "message": {
                       "type": "string",
