@@ -4,7 +4,7 @@ import bcrypt from 'bcrypt';
 import { THIRTY_DAYS } from '../constants/index.js';
 import {
   signinUser,
-  // logoutUser,
+  logoutUser,
   refreshUsersSession,
   requestResetToken,
   resetPassword,
@@ -32,17 +32,29 @@ export const signupUserController = async (req, res, next) => {
       password: hashedPassword,
     });
 
+    // Генерация сессии и токенов для нового пользователя
+    const { session } = await signinUser({ email, password });
+
+    if (!session || !session.refreshToken) {
+      return next(createHttpError(500, 'Failed to create session'));
+    }
+
+    setupSession(res, session);
+
     res.status(201).json({
       message: 'Successfully registered a user!',
       user: {
         email: newUser.email,
         name: newUser.name,
+        _id: newUser._id,
         gender: newUser.gender,
         avatar: newUser.avatarUrl,
         weight: newUser.weight,
         dailySportTime: newUser.dailySportTime,
         dailyNorm: newUser.dailyNorm,
       },
+      sessionId: session._id,
+      refreshToken: session.refreshToken,
     });
   } catch (error) {
     next(error);
@@ -87,6 +99,7 @@ export const signinUserController = async (req, res, next) => {
       user: {
         email: user.email,
         name: user.name,
+        _id: user._id,
         gender: user.gender,
         avatar: user.avatarUrl,
         weight: user.weight,
@@ -94,6 +107,8 @@ export const signinUserController = async (req, res, next) => {
         dailyNorm: user.dailyNorm,
       },
       accessToken: session.accessToken,
+      sessionId: session._id,
+      refreshToken: session.refreshToken,
     });
   } catch (error) {
     next(error);
