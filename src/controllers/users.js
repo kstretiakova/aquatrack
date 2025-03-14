@@ -102,22 +102,23 @@ export const signinUserController = async (req, res, next) => {
 
 export const refreshUserSessionController = async (req, res, next) => {
   try {
-    const { refreshToken } = req.cookies;
-    if (!refreshToken) {
-      return res.status(401).json({
-        status: 401,
-        message: 'Unauthorized: No refresh token',
-      });
-    }
-    const session = await refreshUsersSession(refreshToken);
+    const { sessionId, refreshToken } = req.cookies;
 
-    res.cookie('refreshToken', session.refreshToken, {
-      httpOnly: true,
-      maxAge: 30 * 24 * 60 * 60 * 1000,
-    });
+    if (!sessionId || !refreshToken) {
+      return next(createHttpError(401, 'Refresh token missing'));
+    }
+
+    const session = await refreshUsersSession({ sessionId, refreshToken });
+
+    if (!session) {
+      return next(createHttpError(401, 'Invalid refresh token'));
+    }
+
+    setupSession(res, session);
+
     res.status(200).json({
       status: 200,
-      message: 'Successfully refreshed a session!',
+      message: 'Successfully refreshed session!',
       data: {
         accessToken: session.accessToken,
       },
@@ -126,6 +127,7 @@ export const refreshUserSessionController = async (req, res, next) => {
     next(error);
   }
 };
+
 export const logoutUserController = async (req, res, next) => {
   try {
     const { refreshToken } = req.cookies;
@@ -156,7 +158,7 @@ export const getCurrentUserController = async (req, res, next) => {
       avatarUrl,
     } = req.user;
 
-    res.json({
+    res.status(200).json({
       status: 200,
       message: 'Current user retrieved successfully!',
       data: {
@@ -242,7 +244,7 @@ export const updateUserAvatarController = async (req, res, next) => {
 export const requestResetEmailController = async (req, res, next) => {
   try {
     await requestResetToken(req.body.email);
-    res.json({
+    res.status(200).json({
       status: 200,
       message: 'Reset password email has been successfully sent.',
       data: {},
@@ -255,7 +257,7 @@ export const requestResetEmailController = async (req, res, next) => {
 export const resetPasswordController = async (req, res, next) => {
   try {
     await resetPassword(req.body);
-    res.json({
+    res.status(200).json({
       status: 200,
       message: 'Password has been successfully reset.',
       data: {},
