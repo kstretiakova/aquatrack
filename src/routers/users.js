@@ -62,6 +62,6 @@ router.patch(
   ctrlWrapper(updateUserAvatarController),
 );
 
-router.get('/counter', authenticate, ctrlWrapper(getUsersCounterController)); // Исправлено
+router.get('/counter', ctrlWrapper(getUsersCounterController));
 
 export default router;

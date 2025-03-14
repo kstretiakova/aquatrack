@@ -133,20 +133,19 @@ export const resetPassword = async ({ token, password }) => {
   await SessionsCollection.deleteMany({ userId: user._id });
 };
 
-export const getUsersCounter = async () => {
+export const getUsersCount = async () => {
   try {
-    const usersCounter = await UsersCollection.countDocuments({});
+    const usersCount = await UsersCollection.countDocuments({});
 
-    const lastUsers = await UsersCollection.find({})
-      .sort({ createdAt: -1 })
-      .limit(3);
-
+    // get three last avatars
+    const lastUsers = await UsersCollection.find({}).sort({ createdAt: -1 }); //.limit(3);
     const lastUsersAvatars = lastUsers
       .map((user) => user.avatarUrl)
-      .filter((url) => url && url.trim() !== '');
+      .filter((url) => url && url.trim() !== '')
+      .slice(0, 3);
 
     return {
-      usersCounter,
+      usersCount,
       lastUsersAvatars,
     };
   } catch (error) {

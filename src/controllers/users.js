@@ -4,15 +4,15 @@ import bcrypt from 'bcrypt';
 import { THIRTY_DAYS } from '../constants/index.js';
 import {
   signinUser,
-  logoutUser,
+  // logoutUser,
   refreshUsersSession,
   requestResetToken,
   resetPassword,
-  getUsersCounter,
+  getUsersCount,
 } from '../services/users.js';
 import { saveFileToCloudinary } from '../utils/saveFileToCloudinary.js';
-import { saveFileToUploadDir } from '../utils/saveFileToUploadDir.js';
-import { getEnvVar } from '../utils/getEnvVar.js';
+// import { saveFileToUploadDir } from '../utils/saveFileToUploadDir.js';
+// import { getEnvVar } from '../utils/getEnvVar.js';
 import { UsersCollection } from '../db/models/user.js';
 import { SessionsCollection } from '../db/models/session.js';
 
@@ -269,16 +269,16 @@ export const resetPasswordController = async (req, res, next) => {
 
 export const getUsersCounterController = async (req, res, next) => {
   try {
-    const userData = await getUsersCounter();
-    const { usersCounter, lastUsersAvatars } = userData;
+    const userData = await getUsersCount();
+    const { usersCount, lastUsersAvatars } = userData;
 
     res.status(200).json({
       status: 200,
-      message: 'Successfully got full info about registered users!',
-      data: {
-        usersCounter,
-        lastUsersAvatars,
-      },
+      message: 'Successfully got total count of registered users!',
+      // data: {
+      usersCount,
+      lastUsersAvatars,
+      // },
     });
   } catch (error) {
     next(error);

@@ -21,14 +21,14 @@ responses:
               example: 200
             message:
               type: string
-              example: Successfully got full info about registered users!
+              example: Successfully got total count of registered users!
             data:
               type: object
               required:
-                - usersCounter
+                - usersCount
                 - lastUsersAvatars
               properties:
-                usersCounter:
+                usersCount:
                   type: number
                   example: 1488
                 lastUsersAvatars:
