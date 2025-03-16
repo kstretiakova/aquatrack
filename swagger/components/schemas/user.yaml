@@ -8,7 +8,7 @@ required:
   - weight
   - dailySportTime
   - dailyNorm
-  - avatarUrl
+  # - avatarUrl
 
 properties:
   _id:
@@ -31,7 +31,7 @@ properties:
   gender:
     description: "User's gender"
     type: string
-    example: female
+    example: 'woman'
   weight:
     description: "User's weight"
     type: number
