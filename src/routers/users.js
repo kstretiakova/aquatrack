@@ -3,7 +3,6 @@ import { ctrlWrapper } from '../utils/ctrlWrapper.js';
 import {
   inputUserSchema,
   refreshTokenSchema,
-  refreshTokenSchema,
   requestResetEmailSchema,
   resetPasswordSchema,
 } from '../validation/users.js';
@@ -39,7 +38,6 @@ router.post(
 router.post(
   '/refresh',
   validateBody(refreshTokenSchema),
-  validateBody(refreshTokenSchema),
   ctrlWrapper(refreshUserSessionController),
 );
 router.post('/logout', ctrlWrapper(logoutUserController));
@@ -57,7 +55,6 @@ router.post(
 
 router.patch(
   '/update',
-  '/update',
   authenticate,
   validateBody(updateUserSchema),
   ctrlWrapper(updateUserController),
@@ -70,7 +67,6 @@ router.patch(
   ctrlWrapper(updateUserAvatarController),
 );
 
-router.get('/counter', ctrlWrapper(getUsersCounterController));
 router.get('/counter', ctrlWrapper(getUsersCounterController));
 
 export default router;
