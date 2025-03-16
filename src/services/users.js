@@ -63,24 +63,27 @@ export const refreshUsersSession = async ({ sessionId, refreshToken }) => {
     _id: sessionId,
     refreshToken,
   });
-  if (!session || new Date() > new Date(session.refreshTokenValidUntil)) {
-    throw createHttpError(401, 'Invalid or expired session');
+  if (!session) {
+    throw createHttpError(401, 'Session not found');
   }
+
+  const isSessionTokenExpired =
+    new Date() > new Date(session.refreshTokenValidUntil);
+
+  if (isSessionTokenExpired) {
+    throw createHttpError(401, 'Session token expired');
+  }
+
+  const newSession = generateSession();
 
   await SessionsCollection.deleteOne({ _id: sessionId, refreshToken });
   return SessionsCollection.create({
     userId: session.userId,
-    ...generateSession(),
+    ...newSession,
   });
 };
 
 export const logoutUser = async (sessionId) => {
-  const session = await SessionsCollection.findById(sessionId);
-
-  if (!session) {
-    throw createHttpError(404, 'Session not found');
-  }
-
   await SessionsCollection.deleteOne({ _id: sessionId });
 };
 
@@ -133,20 +136,19 @@ export const resetPassword = async ({ token, password }) => {
   await SessionsCollection.deleteMany({ userId: user._id });
 };
 
-export const getUsersCounter = async () => {
+export const getUsersCount = async () => {
   try {
-    const usersCounter = await UsersCollection.countDocuments({});
+    const usersCount = await UsersCollection.countDocuments({});
 
-    const lastUsers = await UsersCollection.find({})
-      .sort({ createdAt: -1 })
-      .limit(3);
-
+    // get three last avatars
+    const lastUsers = await UsersCollection.find({}).sort({ createdAt: -1 }); //.limit(3);
     const lastUsersAvatars = lastUsers
       .map((user) => user.avatarUrl)
-      .filter((url) => url && url.trim() !== '');
+      .filter((url) => url && url.trim() !== '')
+      .slice(0, 3);
 
     return {
-      usersCounter,
+      usersCount,
       lastUsersAvatars,
     };
   } catch (error) {

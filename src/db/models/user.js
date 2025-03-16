@@ -1,5 +1,5 @@
 import { model, Schema } from 'mongoose';
-import {GENDER_TYPES} from '../../constants/index.js';
+import { GENDER_TYPES } from '../../constants/index.js';
 
 const usersSchema = new Schema(
   {
@@ -19,7 +19,7 @@ const usersSchema = new Schema(
     gender: {
       type: String,
       enum: GENDER_TYPES,
-      default: 'none',
+      default: 'woman',
       required: true,
     },
     weight: {

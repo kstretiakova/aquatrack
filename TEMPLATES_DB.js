@@ -14,7 +14,7 @@ const user = {
   password:
     '$2b$10$xv2nMv1gefCwV1weV0pAA.H/FxKLuM663uyW0QfYL87k19xb2ou6a' /*Хешований пароль користувача, обов'язково, String*/,
   gender:
-    'man' /*Стать користувача, обов'язково, String, Enum [male, female], default "female"*/,
+    'man' /*Стать користувача, обов'язково, String, Enum [man, woman], default "woman"*/,
   weight: 98 /*Вага користувача в кг, обов'язково, Number, min 0, max 250 default, 0*/,
   dailySportTime: 3 /*Час спорту користувача год/день Number, обов'язково, min 0, max 24, default 0*/,
   dailyNorm: 2500 /*Встановлена норма води мл/день користувачем, обов'язково, Number, min 500, max 15000, default 1500*/,

@@ -4,17 +4,18 @@ import bcrypt from 'bcrypt';
 import { THIRTY_DAYS } from '../constants/index.js';
 import {
   signinUser,
-  logoutUser,
+  // logoutUser,
   refreshUsersSession,
   requestResetToken,
   resetPassword,
-  getUsersCounter,
+  getUsersCount,
+  logoutUser,
 } from '../services/users.js';
 import { saveFileToCloudinary } from '../utils/saveFileToCloudinary.js';
-import { saveFileToUploadDir } from '../utils/saveFileToUploadDir.js';
-import { getEnvVar } from '../utils/getEnvVar.js';
+// import { saveFileToUploadDir } from '../utils/saveFileToUploadDir.js';
+// import { getEnvVar } from '../utils/getEnvVar.js';
 import { UsersCollection } from '../db/models/user.js';
-import { SessionsCollection } from '../db/models/session.js';
+// import { SessionsCollection } from '../db/models/session.js';
 
 export const signupUserController = async (req, res, next) => {
   try {
@@ -32,13 +33,30 @@ export const signupUserController = async (req, res, next) => {
       password: hashedPassword,
     });
 
+    // Генерация сессии и токенов для нового пользователя
+    const { session } = await signinUser({ email, password });
+
+    if (!session || !session.refreshToken) {
+      return next(createHttpError(500, 'Failed to create session'));
+    }
+
+    setupSession(res, session);
+
     res.status(201).json({
-      status: 201,
       message: 'Successfully registered a user!',
-      data: {
-        _id: newUser._id,
+      user: {
+        id: newUser._id,
         email: newUser.email,
+        name: newUser.name,
+        gender: newUser.gender,
+        avatarUrl: newUser.avatarUrl,
+        weight: newUser.weight,
+        dailySportTime: newUser.dailySportTime,
+        dailyNorm: newUser.dailyNorm,
       },
+      accessToken: session.accessToken,
+      sessionId: session._id,
+      refreshToken: session.refreshToken,
     });
   } catch (error) {
     next(error);
@@ -78,19 +96,21 @@ export const signinUserController = async (req, res, next) => {
 
     setupSession(res, session);
 
-    res.json({
-      status: 200,
+    res.status(200).json({
       message: 'Successfully logged in!',
-      data: {
-        accessToken: session.accessToken,
-        user: {
-          id: user._id,
-          name: user.name,
-          email: user.email,
-          gender: user.gender,
-          dailyNorm: user.dailyNorm,
-        },
+      user: {
+        id: user._id,
+        email: user.email,
+        name: user.name,
+        gender: user.gender,
+        avatarUrl: user.avatarUrl,
+        weight: user.weight,
+        dailySportTime: user.dailySportTime,
+        dailyNorm: user.dailyNorm,
       },
+      accessToken: session.accessToken,
+      sessionId: session._id,
+      refreshToken: session.refreshToken,
     });
   } catch (error) {
     next(error);
@@ -98,56 +118,54 @@ export const signinUserController = async (req, res, next) => {
 };
 
 export const refreshUserSessionController = async (req, res, next) => {
-  try {
-    const { sessionId, refreshToken } = req.cookies;
+  const sessionId = req.body.sessionId || req.cookies?.sessionId || null;
+  const refreshToken =
+    req.body.refreshToken || req.cookies?.refreshToken || null;
 
-    if (!sessionId || !refreshToken) {
-      return next(createHttpError(401, 'Refresh token missing'));
-    }
-
-    const session = await refreshUsersSession({ sessionId, refreshToken });
-
-    if (!session) {
-      return next(createHttpError(401, 'Invalid refresh token'));
-    }
-
-    setupSession(res, session);
-
-    res.json({
-      status: 200,
-      message: 'Successfully refreshed session!',
-      data: {
-        accessToken: session.accessToken,
-      },
+  if (!sessionId || !refreshToken) {
+    return res.status(400).json({
+      status: 400,
+      message: 'Session ID and refresh token are required',
     });
-  } catch (error) {
-    next(error);
   }
+
+  const session = await refreshUsersSession({ sessionId, refreshToken });
+  // if (!session) {
+  //   return next(createHttpError(401, 'Invalid refresh token'));
+  // }
+  const user = await UsersCollection.findById(session.userId);
+  // if (!user) {
+  //   return next(createHttpError(404, 'User not found'));
+  // }
+  setupSession(res, session);
+  res.status(200).json({
+    status: 200,
+    message: 'Successfully refreshed session!',
+    sessionId: session._id,
+    accessToken: session.accessToken,
+    refreshToken: session.refreshToken,
+    user: {
+      id: user._id,
+      email: user.email,
+      name: user.name,
+      gender: user.gender,
+      avatarUrl: user.avatarUrl,
+      weight: user.weight,
+      dailySportTime: user.dailySportTime,
+      dailyNorm: user.dailyNorm,
+    },
+  });
 };
 
 export const logoutUserController = async (req, res, next) => {
-  try {
-    const { sessionId } = req.cookies;
-
-    if (!sessionId) {
-      return next(createHttpError(401, 'No active session found'));
-    }
-
-    const deletedSession = await SessionsCollection.findByIdAndDelete(
-      sessionId,
-    );
-
-    if (!deletedSession) {
-      return next(createHttpError(404, 'Session not found'));
-    }
-
-    res.clearCookie('sessionId');
-    res.clearCookie('refreshToken');
-
-    res.status(204).send();
-  } catch (error) {
-    next(error);
+  if (req.cookies.sessionId) {
+    await logoutUser(req.cookies.sessionId);
   }
+
+  res.clearCookie('sessionId');
+  res.clearCookie('refreshToken');
+
+  res.status(204).send();
 };
 
 export const getCurrentUserController = async (req, res, next) => {
@@ -162,11 +180,10 @@ export const getCurrentUserController = async (req, res, next) => {
       dailyNorm,
       avatarUrl,
     } = req.user;
-
-    res.json({
+    res.status(200).json({
       status: 200,
       message: 'Current user retrieved successfully!',
-      data: {
+      user: {
         _id,
         name,
         email,
@@ -274,16 +291,16 @@ export const resetPasswordController = async (req, res, next) => {
 
 export const getUsersCounterController = async (req, res, next) => {
   try {
-    const userData = await getUsersCounter();
-    const { usersCounter, lastUsersAvatars } = userData;
+    const userData = await getUsersCount();
+    const { usersCount, lastUsersAvatars } = userData;
 
     res.status(200).json({
       status: 200,
-      message: 'Successfully got full info about registered users!',
-      data: {
-        usersCounter,
-        lastUsersAvatars,
-      },
+      message: 'Successfully got total count of registered users!',
+      // data: {
+      usersCount,
+      lastUsersAvatars,
+      // },
     });
   } catch (error) {
     next(error);
