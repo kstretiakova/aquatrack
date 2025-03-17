@@ -1,20 +1,21 @@
 tags:
   - Water
-summary: Get monthly water
+summary: Get monthly water consumption
 operationId: getMonthlyWater
-description: 'Get list of monthly waters with this endpoint'
+description: 'Retrieve a list of total daily water consumption for a specific month'
 security:
   - bearerAuth: []
 parameters:
   - in: query
     name: month
+    description: 'The specific month to retrieve water records (Format: YYYY-MM)'
     required: true
     schema:
       type: string
       example: '2025-03'
 responses:
   '200':
-    description: 'Get monthly water'
+    description: Successfully retrieved monthly water records
     content:
       application/json:
         schema:
@@ -29,22 +30,27 @@ responses:
               example: 200
             message:
               type: string
-              example: Successfully found monthly water!
+              example: Successfully retrieved monthly water records!
             data:
               type: array
               items:
                 type: object
                 required:
                   - date
-                  - stats
+                  - totalVolume
                 properties:
                   date:
-                    description: 'Day with total amount of water drunk'
+                    description: 'Date of the record (YYYY-MM-DD)'
                     type: string
+                    format: date
                     example: '2025-03-01'
-                  stats:
-                    description: 'Total amount of water drunk per day, ml'
+                  totalVolume:
+                    description: 'Total amount of water drunk per day (ml)'
                     type: number
                     example: 2100
+  '400':
+    $ref: '../../../components/responses/400.yaml'
   '401':
     $ref: '../../../components/responses/401.yaml'
+  '500':
+    $ref: '../../../components/responses/500.yaml'

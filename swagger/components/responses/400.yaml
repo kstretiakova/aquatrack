@@ -6,7 +6,7 @@ content:
       required:
         - status
         - message
-        - data
+
       properties:
         status:
           type: integer
@@ -21,4 +21,4 @@ content:
           properties:
             message:
               type: string
-              example: 'Bad Request'
+              example: 'Session ID and refresh token are required'

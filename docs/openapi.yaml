@@ -1,4 +1,4 @@
-openapi: 3.1.0
+openapi: 3.0.3
 info:
   version: 1.0.0
   title: AquaTrack Application
@@ -6,13 +6,20 @@ info:
     name: AquaTrack
     url: https://aqua-track-phi.vercel.app/
   description: Team 6
+
 tags:
   - name: Water
-    description: Operations about used water.
+    description: Operations about water tracking.
   - name: Users
-    description: Operations about auth and users.
+    description: Operations about authentication and user management.
+
 servers:
-  - url: https://aquatrackerapi.onrender.com
+  - url: http://localhost:3000
+    description: 'Local server for testing'
+
+security:
+  - bearerAuth: []
+
 paths:
   /water/daily:
     get:
@@ -28,6 +35,7 @@ paths:
       $ref: ../swagger/paths/water/{id}/patch.yaml
     delete:
       $ref: ../swagger/paths/water/{id}/delete.yaml
+
   /users/signup:
     post:
       $ref: ../swagger/paths/users/signup/post.yaml
@@ -64,8 +72,10 @@ paths:
   /users/reset-password:
     post:
       $ref: ../swagger/paths/users/reset-password/post.yaml
+
 components:
   securitySchemes:
     bearerAuth:
       type: http
       scheme: bearer
+      bearerFormat: JWT

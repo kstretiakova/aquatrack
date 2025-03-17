@@ -3,10 +3,12 @@ tags:
 summary: Get registered users counter
 operationId: counterUsers
 description: 'Get some info about registered users'
-security: []
+security:
+  - bearerAuth: []
+
 responses:
   '200':
-    description: 'Get info about registered users'
+    description: Successfully retrieved registered users count
     content:
       application/json:
         schema:
@@ -14,7 +16,8 @@ responses:
           required:
             - status
             - message
-            - data
+            - usersCount
+            - lastUsersAvatars
           properties:
             status:
               type: integer
@@ -22,17 +25,18 @@ responses:
             message:
               type: string
               example: Successfully got total count of registered users!
-            data:
-              type: object
-              required:
-                - usersCount
-                - lastUsersAvatars
-              properties:
-                usersCount:
-                  type: number
-                  example: 1488
-                lastUsersAvatars:
-                  type: array
-                  items:
-                    type: string
-                    example: https://res.cloudinary.com/douwe7mix/image/upload/v1738700367/ily2elrvnt2hradnchj3.jpg
+            usersCount:
+              type: number
+              example: 1488
+            lastUsersAvatars:
+              type: array
+              description: List of the latest user avatars
+              items:
+                type: string
+                format: uri
+                example: https://res.cloudinary.com/douwe7mix/image/upload/v1738700367/ily2elrvnt2hradnchj3.jpg
+
+  '401':
+    $ref: ../../../components/responses/401.yaml
+  '500':
+    $ref: ../../../components/responses/500.yaml

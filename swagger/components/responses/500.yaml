@@ -1,4 +1,4 @@
-description: ServerError
+description: Internal Server Error
 content:
   application/json:
     schema:
@@ -6,7 +6,6 @@ content:
       required:
         - status
         - message
-        - data
       properties:
         status:
           type: integer

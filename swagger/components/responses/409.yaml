@@ -6,7 +6,6 @@ content:
       required:
         - status
         - message
-        - data
       properties:
         status:
           type: integer
@@ -21,4 +20,4 @@ content:
           properties:
             message:
               type: string
-              example: 'Email in use'
+              example: 'Email already in use'

@@ -21,7 +21,8 @@ export const startServer = () => {
       limit: '100kb',
     }),
   );
-  app.use('/api-docs', swaggerDocs());
+
+  app.use('/api-docs', ...swaggerDocs());
   app.use(cors());
   app.use(cookieParser());
 

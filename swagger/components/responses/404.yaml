@@ -6,7 +6,7 @@ content:
       required:
         - status
         - message
-        - data
+
       properties:
         status:
           type: integer
@@ -21,4 +21,4 @@ content:
           properties:
             message:
               type: string
-              example: 'Data not found'
+              example: 'User not found or data does not exist'

@@ -1,11 +1,12 @@
 tags:
   - Water
-summary: Create data of water portion
+summary: Create a water intake record
 operationId: addWater
-description: 'Create data of water portion with payload'
+description: 'Create a new record of water intake with volume and timestamp'
 security:
   - bearerAuth: []
 requestBody:
+  required: true
   content:
     application/json:
       schema:
@@ -15,17 +16,19 @@ requestBody:
           - date
         properties:
           volume:
-            description: 'The amount of water drunk, ml'
+            description: 'Amount of water consumed (ml)'
             type: number
+            minimum: 1
             example: 250
           date:
-            description: 'Time of drinking a portion of water'
+            description: 'Timestamp of water intake'
             type: string
-            example: '2025-03-05T10:00:00.000+00:00'
+            format: date-time
+            example: '2025-03-05T10:00:00.000Z'
 
 responses:
-  '200':
-    description: Create data of water portion
+  '201':
+    description: Successfully created a water intake record
     content:
       application/json:
         schema:
@@ -40,9 +43,12 @@ responses:
               example: 201
             message:
               type: string
-              example: Successfully created data of water portion!
+              example: Successfully created a water intake record!
             data:
-              type: object
               $ref: '../../components/schemas/water.yaml'
+  '400':
+    $ref: '../../components/responses/400.yaml'
   '401':
     $ref: '../../components/responses/401.yaml'
+  '500':
+    $ref: '../../components/responses/500.yaml'
