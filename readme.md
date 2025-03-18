@@ -1,6 +1,6 @@
-Swagger: https://aquatrack-1v64.onrender.com/api-docs/
+Swagger: https://aquatrack-dfub.onrender.com/api-docs/
 
-API: https://aquatrack-1v64.onrender.com/
+API: https://aquatrack-dfub.onrender.com
 
 GitHub App: https://github.com/Mariia2990/Aqua-Track
 

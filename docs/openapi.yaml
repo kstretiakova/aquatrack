@@ -14,8 +14,7 @@ tags:
     description: Operations about authentication and user management.
 
 servers:
-  - url: http://localhost:3000
-    description: 'Local server for testing'
+  - url: https://aquatrack-dfub.onrender.com
 
 security:
   - bearerAuth: []
