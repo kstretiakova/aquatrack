@@ -1,22 +1,27 @@
 tags:
   - Water
-summary: Update data of water portion
+summary: Update water record
 operationId: updateWater
-description: 'Update the data about the portion of water by id with payload'
+description: 'Update a specific water record by its ID with new volume and date'
 security:
   - bearerAuth: []
 parameters:
   - in: path
     name: id
+    description: 'Unique identifier of the water record'
     required: true
     schema:
       type: string
       example: '65ca67e7ae7f10c88b598008'
 requestBody:
+  required: true
   content:
     application/json:
       schema:
         type: object
+        required:
+          - volume
+          - date
         properties:
           volume:
             description: 'The amount of water drunk, ml'
@@ -25,11 +30,12 @@ requestBody:
           date:
             description: 'Time of drinking a portion of water'
             type: string
+            format: date-time
             example: '2025-03-05T10:00:00.000+00:00'
 
 responses:
   '200':
-    description: 'Patch data of water portion'
+    description: Successfully updated the water record
     content:
       application/json:
         schema:
@@ -44,9 +50,12 @@ responses:
               example: 200
             message:
               type: string
-              example: Successfully patched the data of water portion!
+              example: Successfully updated the water record!
             data:
-              type: object
               $ref: '../../../components/schemas/water.yaml'
+  '400':
+    $ref: '../../../components/responses/400.yaml'
   '404':
     $ref: '../../../components/responses/404.yaml'
+  '500':
+    $ref: '../../../components/responses/500.yaml'

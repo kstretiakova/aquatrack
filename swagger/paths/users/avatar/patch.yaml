@@ -2,17 +2,20 @@ tags:
   - Users
 summary: Update User Avatar
 operationId: patchUserAvatar
-description: 'Update the avatar user by id with binary image'
+description: 'Update the user avatar by uploading a binary image'
 security:
   - bearerAuth: []
 requestBody:
+  required: true
   content:
     multipart/form-data:
       schema:
         type: object
+        required:
+          - avatarUrl
         properties:
-          avatar:
-            description: "User's avatar"
+          avatarUrl:
+            description: "User's avatar image"
             type: string
             format: binary
 responses:
@@ -34,7 +37,15 @@ responses:
               type: string
               example: Successfully updated user avatar
             data:
-              $ref: ../../../components/schemas/user.yaml
+              type: object
+              required:
+                - avatarUrl
+              properties:
+                avatarUrl:
+                  description: 'Updated avatar URL'
+                  type: string
+                  example: 'https://res.cloudinary.com/douwe7mix/image/upload/v1738700367/ily2elrvnt2hradnchj3.jpg'
+
   '400':
     $ref: ../../../components/responses/400.yaml
   '401':

@@ -2,8 +2,28 @@ tags:
   - Users
 summary: Refresh Users Session
 operationId: refreshUsersSession
-description: 'Refresh Users Session in the Application'
+description: 'Refresh Users Session and get new access and refresh tokens'
 security: []
+
+requestBody:
+  required: true
+  content:
+    application/json:
+      schema:
+        type: object
+        required:
+          - sessionId
+          - refreshToken
+        properties:
+          sessionId:
+            description: 'ID of the user session'
+            type: string
+            example: '67d18a604054995b6afe00f7'
+          refreshToken:
+            description: 'Refresh token to generate new access token'
+            type: string
+            example: 'new-refresh-token-1234'
+
 responses:
   '200':
     description: Successfully refreshed a session!
@@ -14,7 +34,10 @@ responses:
           required:
             - status
             - message
-            - data
+            - sessionId
+            - accessToken
+            - refreshToken
+            - user
           properties:
             status:
               type: integer
@@ -22,16 +45,20 @@ responses:
             message:
               type: string
               example: Successfully refreshed a session!
-            data:
-              type: object
-              required:
-                - accessToken
-              properties:
-                accessToken:
-                  type: string
-                  example: '2zQaqOpj5WrfbR32j0UAh7WAtaIoaRYkYNVZKg6T'
-  '401':
-    description: Unauthorized error
+            sessionId:
+              type: string
+              example: '67d18a604054995b6afe00f7'
+            accessToken:
+              type: string
+              example: '2zQaqOpj5WrfbR32j0UAh7WAtaIoaRYkYNVZKg6T'
+            refreshToken:
+              type: string
+              example: 'new-refresh-token-1234'
+            user:
+              $ref: ../../../components/schemas/user.yaml
+
+  '400':
+    description: Bad Request error - Missing required fields
     content:
       application/json:
         schema:
@@ -39,19 +66,16 @@ responses:
           required:
             - status
             - message
-            - data
           properties:
             status:
               type: integer
-              example: 401
+              example: 400
             message:
               type: string
-              example: UnauthorizedError
-            data:
-              type: object
-              required:
-                - message
-              properties:
-                message:
-                  type: string
-                  example: 'Session token expired'
+              example: 'Session ID and refresh token are required'
+
+  '401':
+    $ref: ../../../components/responses/401.yaml
+
+  '500':
+    $ref: ../../../components/responses/500.yaml
